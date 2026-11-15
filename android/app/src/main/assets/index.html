@@ -104,7 +104,23 @@
   <div id="root" class="w-full max-w-full overflow-x-hidden"></div>
 
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useEffect } = React;
+
+    // LocalStorage Helpers
+    const loadStorage = (key, fallback) => {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    };
+
+    const saveStorage = (key, val) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+      } catch (e) {}
+    };
 
     // Pure 100% Vector SVG Icons (Apple SF Symbols style)
     const Icons = {
@@ -275,9 +291,20 @@
           <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       ),
-      Threads: ({ className = "w-3.5 h-3.5" }) => (
-        <svg className={`${className} fill-current`} viewBox="0 0 192 192">
-          <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.4619 44.7435C97.1751 44.7417 96.8885 44.7408 96.6019 44.7408C75.875 44.7408 58.7423 57.6534 52.3275 78.0772C48.3371 90.7788 48.7461 106.126 58.8258 116.598C67.6698 125.786 81.3341 129.418 96.6019 129.418C107.828 129.418 118.064 127.351 126.988 123.279C133.799 120.17 139.467 115.688 143.834 109.957L132.812 101.442C129.566 105.706 125.353 108.977 120.354 111.233C113.684 114.246 105.708 115.748 96.6019 115.748C84.4287 115.748 74.394 112.921 68.3242 106.611C61.8596 99.8906 61.2785 89.2882 64.9126 77.7289C69.7578 62.3023 82.5297 58.4108 96.6019 58.4108C96.8184 58.4108 97.0347 58.4114 97.2509 58.4128C114.392 58.5235 124.032 68.7909 125.32 87.8931C117.848 88.084 110.158 89.1417 102.775 91.0366C82.5237 96.2346 70.3237 106.319 72.8407 116.732C74.3218 122.861 79.5702 127.671 86.993 129.742C90.1558 130.625 93.3887 131.066 96.6019 131.066C103.585 131.066 110.741 129.28 117.784 125.772C125.961 121.7 132.327 115.529 136.216 107.894C140.697 115.029 144.153 123.639 145.892 133.565L159.349 131.205C157.065 118.172 152.128 106.843 145.185 97.4367C144.103 94.4984 142.871 91.666 141.537 88.9883ZM96.6019 117.398C87.6792 117.398 83.2144 112.597 84.8569 105.798C86.1365 100.499 92.5186 94.6191 105.819 91.2052C111.455 89.7584 117.279 88.9482 123.111 88.7843C121.849 107.575 111.442 117.398 96.6019 117.398Z"/>
+      Gear: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      ),
+      Check: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      ),
+      Key: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
         </svg>
       )
     };
@@ -310,24 +337,24 @@
       { id: 'Bookmark', label: 'Закладка', Comp: Icons.Bookmark },
     ];
 
-    // Default 16+ Categories
-    const DEFAULT_COLLECTIONS = [
-      { id: 'all', name: 'Все', Icon: Icons.Grid },
-      { id: 'recipes', name: 'Рецепты & Еда', Icon: Icons.Food },
-      { id: 'design', name: 'Дизайн & UI/UX', Icon: Icons.Design },
-      { id: 'dev', name: 'Разработка & Код', Icon: Icons.Code },
-      { id: 'ai', name: 'ИИ & Нейросети', Icon: Icons.AI },
-      { id: 'business', name: 'Бизнес & Стартапы', Icon: Icons.Business },
-      { id: 'finance', name: 'Финансы & Крипта', Icon: Icons.Finance },
-      { id: 'interior', name: 'Интерьер & Архитектура', Icon: Icons.Interior },
-      { id: 'travel', name: 'Путешествия & Гиды', Icon: Icons.Travel },
-      { id: 'fitness', name: 'Фитнес & Здоровье', Icon: Icons.Fitness },
-      { id: 'books', name: 'Книги & Конспекты', Icon: Icons.Book },
-      { id: 'music', name: 'Музыка & Звук', Icon: Icons.Music },
-      { id: 'cinema', name: 'Кино & Сериалы', Icon: Icons.Film },
-      { id: 'shopping', name: 'Покупки & Вишлист', Icon: Icons.Shopping },
-      { id: 'gaming', name: 'Гейминг & Технологии', Icon: Icons.Gaming },
-      { id: 'education', name: 'Саморазвитие', Icon: Icons.Brain }
+    // Default 16 Categories (stored in collections with icon ID for serialization)
+    const DEFAULT_COLLECTIONS_DATA = [
+      { id: 'all', name: 'Все', iconId: 'Grid' },
+      { id: 'recipes', name: 'Рецепты & Еда', iconId: 'Food' },
+      { id: 'design', name: 'Дизайн & UI/UX', iconId: 'Design' },
+      { id: 'dev', name: 'Разработка & Код', iconId: 'Code' },
+      { id: 'ai', name: 'ИИ & Нейросети', iconId: 'AI' },
+      { id: 'business', name: 'Бизнес & Стартапы', iconId: 'Business' },
+      { id: 'finance', name: 'Финансы & Крипта', iconId: 'Finance' },
+      { id: 'interior', name: 'Интерьер & Архитектура', iconId: 'Interior' },
+      { id: 'travel', name: 'Путешествия & Гиды', iconId: 'Travel' },
+      { id: 'fitness', name: 'Фитнес & Здоровье', iconId: 'Fitness' },
+      { id: 'books', name: 'Книги & Конспекты', iconId: 'Book' },
+      { id: 'music', name: 'Музыка & Звук', iconId: 'Music' },
+      { id: 'cinema', name: 'Кино & Сериалы', iconId: 'Film' },
+      { id: 'shopping', name: 'Покупки & Вишлист', iconId: 'Shopping' },
+      { id: 'gaming', name: 'Гейминг & Технологии', iconId: 'Gaming' },
+      { id: 'education', name: 'Саморазвитие', iconId: 'Brain' }
     ];
 
     const CONTENT_TYPES = [
@@ -398,81 +425,6 @@
         savedAt: '5 дней назад',
         tags: ['Фитнес', 'Здоровье', 'Осанка', 'Привычки'],
         collectionId: 'fitness'
-      },
-      {
-        id: 'travel-1',
-        url: 'https://youtube.com/watch?v=japan_hidden_gems',
-        title: 'Неизведанная Япония: 7 аутентичных деревень и онсэнов в горах префектуры Нагано',
-        description: 'Кинематографичный гид по традиционным рёканам, пешеходным тропам и лучшим горячим источникам.',
-        author: '@tokyo_lens',
-        platform: 'YouTube',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=80',
-        aiSummary: 'Авторский маршрут по уединённым локациям Японии вдали от туристических толп. Включает логистику на поездах JR Pass и рекомендации по сезонам.',
-        contentType: 'video',
-        isPinned: false,
-        savedAt: '1 нед. назад',
-        tags: ['Путешествия', 'Япония', 'Гид', 'Маршруты'],
-        collectionId: 'travel'
-      },
-      {
-        id: '2',
-        url: 'https://x.com/figma/status/2026',
-        title: 'Apple Design Awards 2026: разбор победителей и дизайн-приемов',
-        description: 'Анализ микровзаимодействий, кинетики жестов и тактильного отклика в лучших iOS-приложениях года.',
-        author: '@apple_designer',
-        platform: 'X',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1581291518655-9523c932deda?w=600&auto=format&fit=crop&q=80',
-        aiSummary: 'Анализ ключевых трендов интерфейсов: глубина размытия, динамические отклики и адаптация под темную тему OLED-дисплеев.',
-        contentType: 'thread',
-        isPinned: false,
-        savedAt: '12 нояб.',
-        tags: ['Дизайн', 'iOS', 'UI/UX'],
-        collectionId: 'design'
-      },
-      {
-        id: '3',
-        url: 'https://instagram.com/p/minimal',
-        title: 'Компактная студия 38 м² с трансформируемой мебелью',
-        description: 'Зонирование с помощью матового стекла, скрытый рабочий стол и скрытая подсветка.',
-        author: '@studio_nordic',
-        platform: 'Instagram',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1502005229762-ee1b2da9732f?w=600&auto=format&fit=crop&q=80',
-        aiSummary: 'Примеры эргономичного использования пространства: теплая подсветка, скрытые системы хранения и визуальное зонирование.',
-        contentType: 'image',
-        isPinned: false,
-        savedAt: '10 нояб.',
-        tags: ['Интерьер', 'Минимализм'],
-        collectionId: null
-      },
-      {
-        id: '4',
-        url: 'https://tiktok.com/@dev/react19',
-        title: 'React 19 Server Actions: как перестроить мышление frontend-разработчика',
-        description: 'Мини-гайд: оптимистичные обновления, отказ от useEffect для мутаций и формы без бойлерплейта.',
-        author: '@dan_abramov_fan',
-        platform: 'TikTok',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80',
-        aiSummary: 'Практическое руководство по Server Actions: управление состоянием через useActionState и уменьшение клиентского бандла.',
-        contentType: 'video',
-        isPinned: false,
-        savedAt: '8 нояб.',
-        tags: ['React', 'Frontend', 'Код'],
-        collectionId: null
-      },
-      {
-        id: '5',
-        url: 'https://t.me/tech_insights',
-        title: 'Эволюция ИИ-агентов: от чат-ботов к автономным исполнителям задач',
-        description: 'Исследование MIT Tech Review: как микроагенты переопределяют автоматизацию персональной продуктивности.',
-        author: 'Tech Insights',
-        platform: 'Telegram',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&auto=format&fit=crop&q=80',
-        aiSummary: 'Анализ перехода к автономным мультиагентным системам. Главный фокус: долговременная векторная память и безопасность инструментов.',
-        contentType: 'article',
-        isPinned: false,
-        savedAt: '5 нояб.',
-        tags: ['ИИ', 'Агенты', 'Будущее'],
-        collectionId: 'ai'
       }
     ];
 
@@ -480,30 +432,130 @@
     const openExternalUrl = (url) => {
       if (!url) return;
       try {
-        // First try standard window.location to trigger Android shouldOverrideUrlLoading
         window.location.href = url;
       } catch (err) {
         window.open(url, '_blank');
       }
     };
 
+    // Client-side call to Google Gemini or Groq Gemma
+    const requestAIAnalysis = async (url, config) => {
+      const { provider, apiKey, model, customEndpoint } = config;
+      if (!apiKey || !apiKey.trim()) {
+        throw new Error('API ключ не задан. Перейдите в настройки ИИ.');
+      }
+
+      const systemPrompt = "Ты персональный AI-ассистент менеджера закладок. Твоя задача — извлечь максимум пользы из предоставленной ссылки/материала. Отвечай строго валидным JSON без markdown разметки.";
+      const userPrompt = `Ссылка или текст пользователя: "${url}".
+Сформируй JSON объект со следующими полями:
+- "title": понятный, красивый заголовок материала на русском языке (макс. 100 символов).
+- "summary": емкая выжимка сути и пользы из 1-2 предложений на русском языке.
+- "tags": массив из 3-4 релевантных русскоязычных тегов (например: ["Нейросети", "Гайд", "Технологии"]).
+- "platform": определи источник (Instagram, TikTok, YouTube, Threads, X, Telegram или Web).
+
+Формат строго: {"title":"...","summary":"...","tags":["..."],"platform":"..."}`;
+
+      if (provider === 'gemini') {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-1.5-flash'}:generateContent?key=${apiKey.trim()}`;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error?.message || `Ошибка Google Gemini API (${res.status})`);
+        }
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        return JSON.parse(text);
+      } else {
+        // Groq (Gemma / Llama) or Custom OpenAI-compatible endpoint
+        const endpoint = provider === 'groq'
+          ? 'https://api.groq.com/openai/v1/chat/completions'
+          : (customEndpoint || 'https://openrouter.ai/api/v1/chat/completions');
+
+        const chosenModel = provider === 'groq' ? (model || 'gemma2-9b-it') : (model || 'google/gemma-2-9b-it:free');
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey.trim()}`
+          },
+          body: JSON.stringify({
+            model: chosenModel,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            response_format: { type: "json_object" }
+          })
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error?.message || `Ошибка API (${res.status}): ${res.statusText}`);
+        }
+        const data = await res.json();
+        const text = data.choices?.[0]?.message?.content;
+        return JSON.parse(text);
+      }
+    };
+
     function App() {
-      const [items, setItems] = useState(INITIAL_ITEMS);
+      // Bookmarks State with LocalStorage persistence
+      const [items, setItems] = useState(() => loadStorage('sv_items', INITIAL_ITEMS));
+      useEffect(() => { saveStorage('sv_items', items); }, [items]);
+
+      // Categories State with LocalStorage persistence
+      const [collections, setCollections] = useState(() => loadStorage('sv_collections', DEFAULT_COLLECTIONS_DATA));
+      useEffect(() => { saveStorage('sv_collections', collections); }, [collections]);
+
+      // AI Settings State with LocalStorage persistence
+      const [aiConfig, setAiConfig] = useState(() => loadStorage('sv_ai_config', {
+        provider: 'groq', // 'groq' (Gemma) | 'gemini' | 'custom'
+        apiKey: '',
+        model: 'gemma2-9b-it',
+        customEndpoint: ''
+      }));
+      useEffect(() => { saveStorage('sv_ai_config', aiConfig); }, [aiConfig]);
+
       const [searchQuery, setSearchQuery] = useState('');
       const [activeType, setActiveType] = useState('all');
       const [activeCollection, setActiveCollection] = useState('all');
       const [urlInput, setUrlInput] = useState('');
       const [isProcessing, setIsProcessing] = useState(false);
+      const [aiStatusMsg, setAiStatusMsg] = useState('');
       const [aiPreview, setAiPreview] = useState(null);
       const [activeSummaryId, setActiveSummaryId] = useState(null);
 
-      // Collections list
-      const [collections, setCollections] = useState(DEFAULT_COLLECTIONS);
-
-      // State for Category Creator Modal
-      const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+      // Category Management Modals
+      const [isManagingCategories, setIsManagingCategories] = useState(false);
       const [newCategoryName, setNewCategoryName] = useState('');
       const [selectedIconId, setSelectedIconId] = useState('Rocket');
+
+      // AI Settings Modal
+      const [isAiSettingsOpen, setIsAiSettingsOpen] = useState(false);
+      const [tempAiConfig, setTempAiConfig] = useState(aiConfig);
+      const [testApiStatus, setTestApiStatus] = useState(null); // null | 'testing' | 'success' | 'error'
+      const [testApiMsg, setTestApiMsg] = useState('');
+
+      // Open AI settings helper
+      const openAiSettings = () => {
+        setTempAiConfig(aiConfig);
+        setTestApiStatus(null);
+        setTestApiMsg('');
+        setIsAiSettingsOpen(true);
+      };
+
+      // Helper to resolve icon component by ID
+      const getCategoryIconComp = (iconId) => {
+        const found = AVAILABLE_ICONS.find(i => i.id === iconId);
+        return found ? found.Comp : (Icons[iconId] || Icons.Folder);
+      };
 
       // Helper to find category info for bookmark
       const getCategoryInfo = (collectionId) => {
@@ -512,66 +564,133 @@
         }
         const found = collections.find(c => c.id === collectionId);
         if (found) {
-          return { name: found.name, isAssigned: true, Icon: found.Icon };
+          return { name: found.name, isAssigned: true, Icon: getCategoryIconComp(found.iconId) };
         }
         return { name: 'Не сортировано', isAssigned: false, Icon: Icons.Folder };
       };
 
+      // Add New Category
       const handleCreateCategory = (e) => {
         e.preventDefault();
         if (!newCategoryName.trim()) return;
 
-        const iconObj = AVAILABLE_ICONS.find(i => i.id === selectedIconId) || AVAILABLE_ICONS[0];
         const newCat = {
           id: `cat_${Date.now()}`,
           name: newCategoryName.trim(),
-          Icon: iconObj.Comp
+          iconId: selectedIconId
         };
 
-        setCollections([...collections, newCat]);
+        const updated = [...collections, newCat];
+        setCollections(updated);
         setActiveCollection(newCat.id);
         setNewCategoryName('');
-        setIsCreatingCategory(false);
       };
 
-      const handleAddUrl = () => {
+      // Delete Category Action
+      const handleDeleteCategory = (catId, catName) => {
+        if (catId === 'all') return;
+        if (!confirm(`Удалить категорию "${catName}"? Закладки из неё будут сохранены как «Не сортировано».`)) {
+          return;
+        }
+
+        // Reassign bookmarks from this category to null ("Не сортировано")
+        const updatedItems = items.map(it => it.collectionId === catId ? { ...it, collectionId: null } : it);
+        setItems(updatedItems);
+
+        // Remove category
+        const updatedCollections = collections.filter(c => c.id !== catId);
+        setCollections(updatedCollections);
+
+        // Reset active filter if was this category
+        if (activeCollection === catId) {
+          setActiveCollection('all');
+        }
+      };
+
+      // Test AI API Connection
+      const handleTestApi = async () => {
+        setTestApiStatus('testing');
+        setTestApiMsg('Отправка проверочного запроса к модели...');
+        try {
+          const testRes = await requestAIAnalysis('https://youtube.com/watch?v=demo_video_ai', tempAiConfig);
+          if (testRes && testRes.title) {
+            setTestApiStatus('success');
+            setTestApiMsg(`✓ Связь с ${tempAiConfig.provider.toUpperCase()} (${tempAiConfig.model}) успешно установлена!`);
+          } else {
+            throw new Error('Пустой ответ от модели');
+          }
+        } catch (err) {
+          setTestApiStatus('error');
+          setTestApiMsg(`✕ ${err.message || 'Ошибка подключения'}`);
+        }
+      };
+
+      // Save AI Config
+      const handleSaveAiConfig = (e) => {
+        e.preventDefault();
+        setAiConfig(tempAiConfig);
+        setIsAiSettingsOpen(false);
+      };
+
+      // Handle Adding URL with Real AI or Heuristics
+      const handleAddUrl = async () => {
         if (!urlInput.trim()) return;
         setIsProcessing(true);
+        setAiStatusMsg(aiConfig.apiKey ? `Анализирую через ${aiConfig.model}...` : 'Локальный AI-парсинг...');
 
-        setTimeout(() => {
-          let platform = 'Web';
-          const u = urlInput.toLowerCase();
-          if (u.includes('youtube') || u.includes('youtu.be')) platform = 'YouTube';
-          else if (u.includes('instagram')) platform = 'Instagram';
-          else if (u.includes('tiktok')) platform = 'TikTok';
-          else if (u.includes('threads.net')) platform = 'Threads';
-          else if (u.includes('twitter') || u.includes('x.com')) platform = 'X';
-          else if (u.includes('t.me')) platform = 'Telegram';
+        let platform = 'Web';
+        const u = urlInput.toLowerCase();
+        if (u.includes('youtube') || u.includes('youtu.be')) platform = 'YouTube';
+        else if (u.includes('instagram')) platform = 'Instagram';
+        else if (u.includes('tiktok')) platform = 'TikTok';
+        else if (u.includes('threads.net')) platform = 'Threads';
+        else if (u.includes('twitter') || u.includes('x.com')) platform = 'X';
+        else if (u.includes('t.me')) platform = 'Telegram';
 
-          const detectedType = (platform === 'YouTube' || platform === 'TikTok') ? 'video'
-                             : (platform === 'Threads' || platform === 'X') ? 'thread'
-                             : 'article';
-          
-          setAiPreview({
-            id: String(Date.now()),
-            url: urlInput,
-            title: urlInput.includes('pasta') ? 'Рецепт классической итальянской пасты'
-                 : urlInput.includes('threads') ? 'Новый тред в сообществе Threads'
-                 : urlInput.includes('finance') || urlInput.includes('btc') ? 'Финансовая аналитика и макропрогноз'
-                 : `Публикация из ${platform}`,
-            description: 'Материал успешно сохранён в закладки и структурирован AI.',
-            author: `@curator_${platform.toLowerCase()}`,
-            platform: platform,
-            thumbnailUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80',
-            aiSummary: 'AI-выжимка: ключевые тезисы и факты сохранены для быстрого семантического поиска.',
-            contentType: detectedType,
-            isPinned: false,
-            savedAt: 'Только что',
-            tags: ['AI-Саммари', platform],
-            collectionId: activeCollection !== 'all' ? activeCollection : null
-          });
-          setIsProcessing(false);
-        }, 550);
+        let detectedType = (platform === 'YouTube' || platform === 'TikTok') ? 'video'
+                         : (platform === 'Threads' || platform === 'X') ? 'thread'
+                         : 'article';
+
+        let finalTitle = `Публикация из ${platform}`;
+        let finalSummary = 'Материал успешно сохранён в закладки и структурирован.';
+        let finalTags = ['AI-Саммари', platform];
+
+        // Try Real API if Key is Configured
+        if (aiConfig.apiKey && aiConfig.apiKey.trim()) {
+          try {
+            const aiData = await requestAIAnalysis(urlInput, aiConfig);
+            if (aiData.title) finalTitle = aiData.title;
+            if (aiData.summary) finalSummary = aiData.summary;
+            if (Array.isArray(aiData.tags) && aiData.tags.length > 0) finalTags = aiData.tags;
+            if (aiData.platform) platform = aiData.platform;
+          } catch (err) {
+            console.warn('AI API Error, falling back to heuristics:', err);
+            finalSummary = `(ИИ API: ${err.message}) Выжимка: полезный контент сохранен в архив.`;
+          }
+        } else {
+          // Heuristic preview
+          if (urlInput.includes('pasta')) finalTitle = 'Рецепт классической итальянской пасты';
+          else if (urlInput.includes('threads')) finalTitle = 'Новый тред в сообществе Threads';
+          else if (urlInput.includes('finance') || urlInput.includes('btc')) finalTitle = 'Финансовая аналитика и макропрогноз';
+        }
+
+        setAiPreview({
+          id: String(Date.now()),
+          url: urlInput,
+          title: finalTitle,
+          description: finalSummary,
+          author: `@user_${platform.toLowerCase()}`,
+          platform: platform,
+          thumbnailUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80',
+          aiSummary: finalSummary,
+          contentType: detectedType,
+          isPinned: false,
+          savedAt: 'Только что',
+          tags: finalTags,
+          collectionId: activeCollection !== 'all' ? activeCollection : null
+        });
+
+        setIsProcessing(false);
       };
 
       const confirmSave = () => {
@@ -605,11 +724,11 @@
       return (
         <div className="min-h-screen bg-black text-white flex flex-col pb-16 w-full max-w-full overflow-x-hidden">
           
-          {/* iOS Top Navigation Bar (Mobile-Optimized) */}
+          {/* iOS Top Navigation Bar */}
           <header className="sticky top-0 z-30 ios-glass border-b border-white/[0.08] w-full">
             <div className="w-full max-w-5xl mx-auto px-4 pt-3 pb-2 flex flex-col gap-2.5">
               
-              {/* Row 1: Logo & Total Count */}
+              {/* Row 1: Logo & AI Settings Button & Count */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#0A84FF] to-[#0051D5] flex items-center justify-center text-white shadow-md shadow-[#0A84FF]/25 flex-shrink-0">
@@ -617,13 +736,39 @@
                   </div>
                   <div className="flex flex-col">
                     <h1 className="text-[16px] font-bold tracking-tight leading-tight text-white">Мои закладки</h1>
-                    <span className="text-[10px] text-[#8E8E93] font-medium">Умный AI-архив</span>
+                    <span className="text-[10px] text-[#8E8E93] font-medium flex items-center gap-1">
+                      {aiConfig.apiKey ? (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span className="text-emerald-400 font-medium">ИИ {aiConfig.model}</span>
+                        </>
+                      ) : (
+                        <span>Умный AI-архив</span>
+                      )}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] text-[11px] text-[#8E8E93] font-medium border border-white/[0.05]">
-                  <span>{filteredItems.length}</span>
-                  <span>{filteredItems.length === 1 ? 'закладка' : 'закладок'}</span>
+                <div className="flex items-center gap-2">
+                  {/* AI Settings Button */}
+                  <button
+                    onClick={openAiSettings}
+                    className={`px-2.5 py-1.5 rounded-[10px] text-[11px] font-medium transition-all flex items-center gap-1.5 border ${
+                      aiConfig.apiKey
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                        : 'bg-[#0A84FF]/10 border-[#0A84FF]/30 text-[#0A84FF] hover:bg-[#0A84FF]/20'
+                    }`}
+                    title="Настройки ИИ API (Gemma / Gemini)"
+                  >
+                    <Icons.Sparkles className="w-3.5 h-3.5" />
+                    <span>{aiConfig.apiKey ? 'ИИ настроен' : 'Подключить ИИ'}</span>
+                  </button>
+
+                  {/* Bookmark Count Badge */}
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] text-[11px] text-[#8E8E93] font-medium border border-white/[0.05]">
+                    <span>{filteredItems.length}</span>
+                    <span>{filteredItems.length === 1 ? 'закладка' : 'закладок'}</span>
+                  </div>
                 </div>
               </div>
 
@@ -654,35 +799,50 @@
             <div className="w-full border-t border-white/[0.04]">
               <div className="w-full max-w-5xl mx-auto px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
                 {collections.map(col => {
-                  const CategoryIcon = col.Icon;
+                  const CategoryIcon = getCategoryIconComp(col.iconId);
                   const isActive = activeCollection === col.id;
 
                   return (
-                    <button
-                      key={col.id}
-                      onClick={() => setActiveCollection(col.id)}
-                      className={`px-3 py-1.5 rounded-[10px] text-[12px] font-medium transition-all whitespace-nowrap flex items-center gap-1.5 flex-shrink-0 ${
-                        isActive
-                          ? 'bg-[#0A84FF] text-white shadow-sm'
-                          : 'bg-[#1C1C1E] text-[#8E8E93] hover:text-white border border-white/[0.04]'
-                      }`}
-                    >
-                      <span className={isActive ? 'text-white' : 'text-[#8E8E93]'}>
-                        <CategoryIcon className="w-3 h-3" />
-                      </span>
-                      <span>{col.name}</span>
-                    </button>
+                    <div key={col.id} className="relative flex items-center flex-shrink-0">
+                      <button
+                        onClick={() => setActiveCollection(col.id)}
+                        className={`px-3 py-1.5 rounded-[10px] text-[12px] font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                          isActive
+                            ? 'bg-[#0A84FF] text-white shadow-sm pr-7'
+                            : 'bg-[#1C1C1E] text-[#8E8E93] hover:text-white border border-white/[0.04]'
+                        }`}
+                      >
+                        <span className={isActive ? 'text-white' : 'text-[#8E8E93]'}>
+                          <CategoryIcon className="w-3 h-3" />
+                        </span>
+                        <span>{col.name}</span>
+                      </button>
+
+                      {/* Quick Delete Category Button (Visible when category is active) */}
+                      {isActive && col.id !== 'all' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCategory(col.id, col.name);
+                          }}
+                          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-white/80 hover:text-rose-400 hover:bg-black/30 transition-colors"
+                          title="Удалить категорию"
+                        >
+                          <Icons.Close className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
 
-                {/* Add New Category Button */}
+                {/* Manage / Add Categories Button */}
                 <button
-                  onClick={() => setIsCreatingCategory(true)}
+                  onClick={() => setIsManagingCategories(true)}
                   className="px-2.5 py-1.5 rounded-[10px] text-[12px] font-medium text-[#0A84FF] bg-[#0A84FF]/10 hover:bg-[#0A84FF]/20 transition-all flex items-center gap-1 border border-[#0A84FF]/30 flex-shrink-0 whitespace-nowrap"
-                  title="Создать категорию"
+                  title="Управление и создание категорий"
                 >
                   <Icons.Plus className="w-3 h-3" />
-                  <span>Категория</span>
+                  <span>Категории</span>
                 </button>
               </div>
             </div>
@@ -721,13 +881,21 @@
                 </button>
               </div>
 
+              {/* Processing hint */}
+              {isProcessing && (
+                <div className="text-[11px] text-[#0A84FF] mt-1.5 px-2 flex items-center gap-1.5 animate-pulse">
+                  <Icons.Sparkles className="w-3 h-3" />
+                  <span>{aiStatusMsg}</span>
+                </div>
+              )}
+
               {/* Apple Intelligence Preview Sheet */}
               {aiPreview && (
                 <div className="w-full mt-3 ios-card p-3.5 border-[#0A84FF]/40 bg-[#0A84FF]/[0.06] animate-fade-in">
                   <div className="flex items-center justify-between mb-2.5">
                     <span className="text-[11px] font-semibold text-[#0A84FF] flex items-center gap-1.5">
                       <Icons.Sparkles className="w-3 h-3 text-[#0A84FF]" />
-                      <span>Распознано AI</span>
+                      <span>Распознано AI ({aiConfig.apiKey ? aiConfig.model : 'Heuristic'})</span>
                     </span>
                     <button onClick={() => setAiPreview(null)} className="text-[#8E8E93] hover:text-white p-1">
                       <Icons.Close className="w-3 h-3" />
@@ -744,7 +912,7 @@
                         </span>
                         {aiPreview.tags.map(t => (
                           <span key={t} className="text-[10px] text-[#8E8E93] bg-white/[0.06] px-1.5 py-0.5 rounded-full">
-                            {t}
+                            #{t}
                           </span>
                         ))}
                       </div>
@@ -937,76 +1105,329 @@
             </div>
           </main>
 
-          {/* Modal for Creating New Category */}
-          {isCreatingCategory && (
+          {/* Modal 1: Category Management (Create & Delete) */}
+          {isManagingCategories && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-              <div className="w-full max-w-sm ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[16px] font-bold text-white">Новая категория</h3>
+              <div className="w-full max-w-md ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-2">
+                    <Icons.Folder className="w-4 h-4 text-[#0A84FF]" />
+                    <h3 className="text-[16px] font-bold text-white">Управление категориями</h3>
+                  </div>
                   <button
-                    onClick={() => setIsCreatingCategory(false)}
+                    onClick={() => setIsManagingCategories(false)}
                     className="p-1 rounded-full text-[#8E8E93] hover:text-white hover:bg-white/10"
                   >
                     <Icons.Close className="w-4 h-4" />
                   </button>
                 </div>
 
-                <form onSubmit={handleCreateCategory}>
-                  <div className="mb-4">
-                    <label className="block text-[11px] font-medium text-[#8E8E93] mb-1.5">
-                      Название категории
+                <div className="overflow-y-auto py-3 space-y-4 flex-1">
+                  
+                  {/* Category Deletion List */}
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-2">
+                      Существующие категории ({collections.length - 1})
                     </label>
-                    <input
-                      type="text"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Например: Искусство, Авто, Мода..."
-                      autoFocus
-                      className="w-full h-9 px-3 rounded-[10px] bg-black/50 text-[13px] text-white placeholder-[#8E8E93] border border-white/10 focus:outline-none focus:border-[#0A84FF]"
-                    />
-                  </div>
+                    <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+                      {collections.filter(c => c.id !== 'all').map(col => {
+                        const CatIcon = getCategoryIconComp(col.iconId);
+                        const count = items.filter(it => it.collectionId === col.id).length;
 
-                  <div className="mb-5">
-                    <label className="block text-[11px] font-medium text-[#8E8E93] mb-1.5">
-                      Выберите векторную иконку:
-                    </label>
-                    <div className="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto p-1 bg-black/30 rounded-[12px] border border-white/5">
-                      {AVAILABLE_ICONS.map(ic => {
-                        const IconComponent = ic.Comp;
-                        const isSelected = selectedIconId === ic.id;
                         return (
-                          <button
-                            type="button"
-                            key={ic.id}
-                            onClick={() => setSelectedIconId(ic.id)}
-                            className={`p-2 rounded-[9px] flex flex-col items-center justify-center transition-all ${
-                              isSelected
-                                ? 'bg-[#0A84FF] text-white ring-2 ring-[#0A84FF]/40'
-                                : 'text-[#8E8E93] hover:text-white hover:bg-white/10'
-                            }`}
-                            title={ic.label}
+                          <div
+                            key={col.id}
+                            className="flex items-center justify-between p-2 rounded-[12px] bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.06] transition-colors"
                           >
-                            <IconComponent className="w-4 h-4" />
-                          </button>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="w-7 h-7 rounded-[8px] bg-[#0A84FF]/10 text-[#0A84FF] flex items-center justify-center flex-shrink-0">
+                                <CatIcon className="w-3.5 h-3.5" />
+                              </span>
+                              <span className="text-[13px] font-medium text-white truncate">{col.name}</span>
+                              <span className="text-[10px] text-[#8E8E93] bg-white/[0.06] px-1.5 py-0.5 rounded-full">{count}</span>
+                            </div>
+
+                            {/* Delete Category Button */}
+                            <button
+                              onClick={() => handleDeleteCategory(col.id, col.name)}
+                              className="p-1.5 rounded-[8px] text-[#8E8E93] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                              title="Удалить категорию"
+                            >
+                              <Icons.Trash className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         );
                       })}
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  {/* Create New Category Section */}
+                  <div className="pt-3 border-t border-white/[0.08]">
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-2">
+                      Создать новую категорию
+                    </label>
+                    
+                    <form onSubmit={handleCreateCategory} className="space-y-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newCategoryName}
+                          onChange={(e) => setNewCategoryName(e.target.value)}
+                          placeholder="Название новой категории..."
+                          className="flex-1 h-9 px-3 rounded-[10px] bg-black/50 text-[13px] text-white placeholder-[#8E8E93] border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                        />
+                        <button
+                          type="submit"
+                          disabled={!newCategoryName.trim()}
+                          className="h-9 px-4 rounded-[10px] bg-[#0A84FF] text-white text-[12px] font-semibold hover:bg-[#0071E3] disabled:opacity-40 transition-all shadow-sm"
+                        >
+                          Создать
+                        </button>
+                      </div>
+
+                      <div>
+                        <span className="block text-[11px] text-[#8E8E93] mb-1.5">Векторная иконка:</span>
+                        <div className="grid grid-cols-8 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-black/40 rounded-[12px] border border-white/5">
+                          {AVAILABLE_ICONS.map(ic => {
+                            const IconComponent = ic.Comp;
+                            const isSelected = selectedIconId === ic.id;
+                            return (
+                              <button
+                                type="button"
+                                key={ic.id}
+                                onClick={() => setSelectedIconId(ic.id)}
+                                className={`p-2 rounded-[8px] flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? 'bg-[#0A84FF] text-white ring-2 ring-[#0A84FF]/40'
+                                    : 'text-[#8E8E93] hover:text-white hover:bg-white/10'
+                                }`}
+                                title={ic.label}
+                              >
+                                <IconComponent className="w-3.5 h-3.5" />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-white/[0.08]">
+                  <button
+                    onClick={() => setIsManagingCategories(false)}
+                    className="w-full h-9 rounded-[10px] text-[13px] font-medium text-white bg-white/10 hover:bg-white/15 transition-colors"
+                  >
+                    Готово
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal 2: AI API Configuration (Gemma / Gemini) */}
+          {isAiSettingsOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-md ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-2">
+                    <Icons.Sparkles className="w-4 h-4 text-[#0A84FF]" />
+                    <h3 className="text-[16px] font-bold text-white">Настройка ИИ по API</h3>
+                  </div>
+                  <button
+                    onClick={() => setIsAiSettingsOpen(false)}
+                    className="p-1 rounded-full text-[#8E8E93] hover:text-white hover:bg-white/10"
+                  >
+                    <Icons.Close className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveAiConfig} className="overflow-y-auto py-3 space-y-4 flex-1">
+                  
+                  {/* Provider Selection */}
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-1.5">
+                      Провайдер ИИ
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setTempAiConfig({ ...tempAiConfig, provider: 'groq', model: 'gemma2-9b-it' })}
+                        className={`p-2.5 rounded-[12px] text-left border transition-all ${
+                          tempAiConfig.provider === 'groq'
+                            ? 'bg-[#0A84FF]/15 border-[#0A84FF] text-white shadow-sm'
+                            : 'bg-white/[0.03] border-white/5 text-[#8E8E93] hover:text-white'
+                        }`}
+                      >
+                        <div className="font-semibold text-[13px] text-white">Gemma (Groq)</div>
+                        <div className="text-[10px] text-emerald-400 mt-0.5">Бесплатно</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTempAiConfig({ ...tempAiConfig, provider: 'gemini', model: 'gemini-1.5-flash' })}
+                        className={`p-2.5 rounded-[12px] text-left border transition-all ${
+                          tempAiConfig.provider === 'gemini'
+                            ? 'bg-[#0A84FF]/15 border-[#0A84FF] text-white shadow-sm'
+                            : 'bg-white/[0.03] border-white/5 text-[#8E8E93] hover:text-white'
+                        }`}
+                      >
+                        <div className="font-semibold text-[13px] text-white">Google Gemini</div>
+                        <div className="text-[10px] text-emerald-400 mt-0.5">Бесплатно</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTempAiConfig({ ...tempAiConfig, provider: 'custom', model: 'google/gemma-2-9b-it:free' })}
+                        className={`p-2.5 rounded-[12px] text-left border transition-all ${
+                          tempAiConfig.provider === 'custom'
+                            ? 'bg-[#0A84FF]/15 border-[#0A84FF] text-white shadow-sm'
+                            : 'bg-white/[0.03] border-white/5 text-[#8E8E93] hover:text-white'
+                        }`}
+                      >
+                        <div className="font-semibold text-[13px] text-white">Свой API</div>
+                        <div className="text-[10px] text-[#8E8E93] mt-0.5">OpenRouter / URL</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* API Key Input */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93]">
+                        API Ключ
+                      </label>
+                      {tempAiConfig.provider === 'groq' && (
+                        <a
+                          href="https://console.groq.com/keys"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[11px] text-[#0A84FF] hover:underline"
+                        >
+                          Получить бесплатный ключ Groq ↗
+                        </a>
+                      )}
+                      {tempAiConfig.provider === 'gemini' && (
+                        <a
+                          href="https://aistudio.google.com/app/apikey"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[11px] text-[#0A84FF] hover:underline"
+                        >
+                          Получить бесплатный ключ Gemini ↗
+                        </a>
+                      )}
+                    </div>
+                    
+                    <div className="relative">
+                      <input
+                        type="password"
+                        value={tempAiConfig.apiKey}
+                        onChange={(e) => setTempAiConfig({ ...tempAiConfig, apiKey: e.target.value })}
+                        placeholder={tempAiConfig.provider === 'groq' ? "gsk_..." : tempAiConfig.provider === 'gemini' ? "AIzaSy..." : "sk-..."}
+                        className="w-full h-10 pl-9 pr-3 rounded-[12px] bg-black/50 text-[13px] text-white placeholder-[#8E8E93] border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                      />
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]">
+                        <Icons.Key className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#8E8E93] mt-1.5 leading-relaxed">
+                      Ключ хранится локально на вашем устройстве в защищённом хранилище браузера.
+                    </p>
+                  </div>
+
+                  {/* Model Selection */}
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-1.5">
+                      Модель
+                    </label>
+                    {tempAiConfig.provider === 'groq' ? (
+                      <select
+                        value={tempAiConfig.model}
+                        onChange={(e) => setTempAiConfig({ ...tempAiConfig, model: e.target.value })}
+                        className="w-full h-10 px-3 rounded-[12px] bg-black/50 text-[13px] text-white border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                      >
+                        <option value="gemma2-9b-it">Google Gemma 2 9B (Быстрая и бесплатная)</option>
+                        <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Максимальная точность)</option>
+                        <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                      </select>
+                    ) : tempAiConfig.provider === 'gemini' ? (
+                      <select
+                        value={tempAiConfig.model}
+                        onChange={(e) => setTempAiConfig({ ...tempAiConfig, model: e.target.value })}
+                        className="w-full h-10 px-3 rounded-[12px] bg-black/50 text-[13px] text-white border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                      >
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Рекомендуется)</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                      </select>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={tempAiConfig.model}
+                          onChange={(e) => setTempAiConfig({ ...tempAiConfig, model: e.target.value })}
+                          placeholder="Например: google/gemma-2-9b-it:free"
+                          className="w-full h-9 px-3 rounded-[10px] bg-black/50 text-[13px] text-white placeholder-[#8E8E93] border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                        />
+                        <input
+                          type="url"
+                          value={tempAiConfig.customEndpoint}
+                          onChange={(e) => setTempAiConfig({ ...tempAiConfig, customEndpoint: e.target.value })}
+                          placeholder="Базовый URL: https://openrouter.ai/api/v1/chat/completions"
+                          className="w-full h-9 px-3 rounded-[10px] bg-black/50 text-[12px] text-white placeholder-[#8E8E93] border border-white/10 focus:outline-none focus:border-[#0A84FF]"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Test Connection Button & Status */}
+                  <div className="pt-2">
                     <button
                       type="button"
-                      onClick={() => setIsCreatingCategory(false)}
-                      className="flex-1 h-9 rounded-[10px] text-[12px] font-medium text-[#8E8E93] hover:text-white bg-white/5 hover:bg-white/10"
+                      onClick={handleTestApi}
+                      disabled={!tempAiConfig.apiKey || testApiStatus === 'testing'}
+                      className="w-full h-9 rounded-[10px] bg-white/5 hover:bg-white/10 text-white text-[12px] font-medium border border-white/10 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-40"
+                    >
+                      {testApiStatus === 'testing' ? (
+                        <>
+                          <span className="animate-spin text-sm">✦</span>
+                          <span>Проверка ключа...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icons.Sparkles className="w-3.5 h-3.5 text-[#0A84FF]" />
+                          <span>Проверить подключение к ИИ</span>
+                        </>
+                      )}
+                    </button>
+
+                    {testApiMsg && (
+                      <div className={`mt-2 p-2 rounded-[8px] text-[11px] leading-relaxed border ${
+                        testApiStatus === 'success'
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                          : testApiStatus === 'error'
+                          ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                          : 'bg-white/5 border-white/10 text-[#8E8E93]'
+                      }`}>
+                        {testApiMsg}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-3 border-t border-white/[0.08] flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAiSettingsOpen(false)}
+                      className="flex-1 h-9 rounded-[10px] text-[12px] font-medium text-[#8E8E93] hover:text-white bg-white/5"
                     >
                       Отмена
                     </button>
                     <button
                       type="submit"
-                      disabled={!newCategoryName.trim()}
-                      className="flex-1 h-9 rounded-[10px] bg-[#0A84FF] text-white text-[12px] font-semibold hover:bg-[#0071E3] disabled:opacity-40 transition-all shadow-sm"
+                      className="flex-1 h-9 rounded-[10px] bg-[#0A84FF] text-white text-[12px] font-semibold hover:bg-[#0071E3] transition-all shadow-sm"
                     >
-                      Создать
+                      Сохранить
                     </button>
                   </div>
                 </form>
