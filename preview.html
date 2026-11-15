@@ -61,7 +61,7 @@
       --bg-pill: #2C2C2E;
       --text-main: #FFFFFF;
       --text-sub: #8E8E93;
-      --glass-nav: rgba(18, 18, 20, 0.88);
+      --glass-nav: #000000;
       --glass-border: rgba(255, 255, 255, 0.08);
       --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
       --accent: #0A84FF;
@@ -70,7 +70,7 @@
       width: 100%;
       max-width: 100%;
       overflow-x: hidden;
-      background-color: var(--bg-canvas);
+      background-color: #000000;
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -79,9 +79,7 @@
       padding: 0;
     }
     .ios-glass {
-      background-color: var(--glass-nav);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      background-color: #000000;
       border-color: var(--glass-border);
     }
     .ios-card {
@@ -89,10 +87,13 @@
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       box-shadow: var(--card-shadow);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
     }
-    .ios-card:hover {
-      background-color: var(--bg-card-hover);
+    @media (hover: hover) {
+      .ios-card:hover {
+        background-color: var(--bg-card-hover);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+    }
       border-color: rgba(255, 255, 255, 0.16);
     }
     ::-webkit-scrollbar { width: 0px; height: 0px; background: transparent; }
@@ -298,10 +299,135 @@
           <line x1="10" y1="1" x2="10" y2="4"/>
           <line x1="14" y1="1" x2="14" y2="4"/>
         </svg>
+      ),
+      Phone: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+        </svg>
+      ),
+      Laptop: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+      ),
+      Cpu: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+        </svg>
+      ),
+      Wifi: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+      ),
+      Cloud: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+      ),
+      Mic: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      ),
+      Palette: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2Z"/>
+        </svg>
+      ),
+      Edit: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+      ),
+      Car: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+        </svg>
+      ),
+      Plane: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+        </svg>
+      ),
+      Gift: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+        </svg>
+      ),
+      Cart: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+        </svg>
+      ),
+      Graduation: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+      ),
+      Chart: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+        </svg>
+      ),
+      Wallet: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/>
+        </svg>
+      ),
+      Shield: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      ),
+      Lightbulb: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>
+        </svg>
+      ),
+      Smile: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+      ),
+      Message: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      ),
+      Users: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      ),
+      Sun: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      ),
+      Moon: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      ),
+      Flame: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+        </svg>
+      ),
+      Compass: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+        </svg>
+      ),
+      Tag: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
       )
     };
 
-    // 24 Vector Icons for Category Creator
+    // 48+ Vector Icons for Category Creator
     const AVAILABLE_ICONS = [
       { id: 'Rocket', label: 'Ракета', Comp: Icons.Rocket },
       { id: 'Globe', label: 'Интернет', Comp: Icons.Globe },
@@ -311,20 +437,45 @@
       { id: 'Design', label: 'Дизайн', Comp: Icons.Design },
       { id: 'Code', label: 'Код', Comp: Icons.Code },
       { id: 'AI', label: 'ИИ', Comp: Icons.AI },
+      { id: 'Cpu', label: 'Чип / Техно', Comp: Icons.Cpu },
+      { id: 'Phone', label: 'Телефон', Comp: Icons.Phone },
+      { id: 'Laptop', label: 'Ноутбук', Comp: Icons.Laptop },
+      { id: 'Wifi', label: 'Связь', Comp: Icons.Wifi },
+      { id: 'Cloud', label: 'Облако', Comp: Icons.Cloud },
       { id: 'Business', label: 'Бизнес', Comp: Icons.Business },
       { id: 'Finance', label: 'Финансы', Comp: Icons.Finance },
+      { id: 'Chart', label: 'Графики', Comp: Icons.Chart },
+      { id: 'Wallet', label: 'Кошелёк', Comp: Icons.Wallet },
       { id: 'Interior', label: 'Интерьер', Comp: Icons.Interior },
       { id: 'Travel', label: 'Путешествия', Comp: Icons.Travel },
+      { id: 'Plane', label: 'Самолёт', Comp: Icons.Plane },
+      { id: 'Car', label: 'Авто', Comp: Icons.Car },
       { id: 'Fitness', label: 'Фитнес', Comp: Icons.Fitness },
       { id: 'Book', label: 'Книги', Comp: Icons.Book },
+      { id: 'Graduation', label: 'Обучение', Comp: Icons.Graduation },
       { id: 'Music', label: 'Музыка', Comp: Icons.Music },
+      { id: 'Mic', label: 'Подкасты', Comp: Icons.Mic },
       { id: 'Film', label: 'Кино', Comp: Icons.Film },
+      { id: 'Palette', label: 'Арт', Comp: Icons.Palette },
+      { id: 'Edit', label: 'Заметки', Comp: Icons.Edit },
       { id: 'Shopping', label: 'Покупки', Comp: Icons.Shopping },
+      { id: 'Cart', label: 'Корзина', Comp: Icons.Cart },
+      { id: 'Gift', label: 'Подарки', Comp: Icons.Gift },
       { id: 'Gaming', label: 'Игры', Comp: Icons.Gaming },
       { id: 'Brain', label: 'Саморазвитие', Comp: Icons.Brain },
       { id: 'Heart', label: 'Здоровье', Comp: Icons.Heart },
       { id: 'Star', label: 'Избранное', Comp: Icons.Star },
       { id: 'Sparkles', label: 'Идеи', Comp: Icons.Sparkles },
+      { id: 'Lightbulb', label: 'Инсайт', Comp: Icons.Lightbulb },
+      { id: 'Shield', label: 'Безопасность', Comp: Icons.Shield },
+      { id: 'Message', label: 'Чат', Comp: Icons.Message },
+      { id: 'Users', label: 'Люди', Comp: Icons.Users },
+      { id: 'Smile', label: 'Эмоции', Comp: Icons.Smile },
+      { id: 'Flame', label: 'Тренды', Comp: Icons.Flame },
+      { id: 'Sun', label: 'День', Comp: Icons.Sun },
+      { id: 'Moon', label: 'Ночь', Comp: Icons.Moon },
+      { id: 'Compass', label: 'Компас', Comp: Icons.Compass },
+      { id: 'Tag', label: 'Тег', Comp: Icons.Tag },
       { id: 'Folder', label: 'Папка', Comp: Icons.Folder },
       { id: 'Bookmark', label: 'Закладка', Comp: Icons.Bookmark },
     ];
@@ -334,15 +485,7 @@
       { id: 'all', name: 'Все', iconId: 'Grid' }
     ];
 
-    const CONTENT_TYPES = [
-      { id: 'all', label: 'Все' },
-      { id: 'video', label: 'Видео' },
-      { id: 'thread', label: 'Треды' },
-      { id: 'image', label: 'Фото' },
-      { id: 'article', label: 'Статьи' }
-    ];
-
-    // Clean initial bookmarks without preassigned category folders
+    // Clean initial bookmarks without fake stock photos
     const INITIAL_ITEMS = [
       {
         id: '1',
@@ -351,9 +494,8 @@
         description: 'Пошаговый мастер-класс шефа: только желтки, сыр пекорино романо и гуанчале.',
         author: '@chef_marco',
         platform: 'YouTube',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&auto=format&fit=crop&q=80',
+        thumbnailUrl: null,
         aiSummary: 'Классический аутентичный рецепт: только желтки, пекорино романо и гуанчале. Секрет идеального соуса — вода из-под пасты при температуре 65°C.',
-        contentType: 'video',
         isPinned: true,
         savedAt: 'Вчера',
         tags: ['Кулинария', 'Рецепты'],
@@ -589,13 +731,18 @@
       useEffect(() => { saveStorage('sv_ai_config_v3', aiConfig); }, [aiConfig]);
 
       const [searchQuery, setSearchQuery] = useState('');
-      const [activeType, setActiveType] = useState('all');
       const [activeCollection, setActiveCollection] = useState('all');
       const [urlInput, setUrlInput] = useState('');
       const [isProcessing, setIsProcessing] = useState(false);
       const [aiStatusMsg, setAiStatusMsg] = useState('');
       const [aiPreview, setAiPreview] = useState(null);
       const [activeSummaryId, setActiveSummaryId] = useState(null);
+
+      // Dedicated Share Mode Window State
+      const [isShareMode, setIsShareMode] = useState(false);
+      const [shareItem, setShareItem] = useState(null);
+      const [isShareLoading, setIsShareLoading] = useState(false);
+      const [shareSavedToast, setShareSavedToast] = useState(false);
 
       // Category Management Modals
       const [isManagingCategories, setIsManagingCategories] = useState(false);
@@ -729,7 +876,7 @@
             description: analyzed.summary,
             author: `@${analyzed.platform.toLowerCase()}_source`,
             platform: analyzed.platform,
-            thumbnailUrl: analyzed.image || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80',
+            thumbnailUrl: null,
             aiSummary: analyzed.summary,
             contentType: detectedType,
             isPinned: false,
@@ -754,21 +901,114 @@
         if (inputEl) inputEl.value = '';
       };
 
+      // Open and process incoming link in the dedicated Quick-Save Share Window
+      const handleOpenShareMode = async (targetUrl) => {
+        setIsShareMode(true);
+        setIsShareLoading(true);
+        setShareSavedToast(false);
+
+        let detectedPlatform = 'Web';
+        const u = targetUrl.toLowerCase();
+        if (u.includes('youtube') || u.includes('youtu.be')) detectedPlatform = 'YouTube';
+        else if (u.includes('instagram')) detectedPlatform = 'Instagram';
+        else if (u.includes('tiktok')) detectedPlatform = 'TikTok';
+        else if (u.includes('threads.net')) detectedPlatform = 'Threads';
+        else if (u.includes('twitter') || u.includes('x.com')) detectedPlatform = 'X';
+        else if (u.includes('t.me')) detectedPlatform = 'Telegram';
+
+        setShareItem({
+          id: String(Date.now()),
+          url: targetUrl,
+          title: `Публикация из ${detectedPlatform}`,
+          description: 'Анализирую...',
+          author: `@${detectedPlatform.toLowerCase()}`,
+          platform: detectedPlatform,
+          thumbnailUrl: null,
+          aiSummary: 'ИИ извлекает главное...',
+          isPinned: false,
+          savedAt: 'Только что',
+          tags: [detectedPlatform],
+          collectionId: null,
+          suggestedCategoryName: null
+        });
+
+        try {
+          const analyzed = await analyzeUrlWithFreeAPI(targetUrl, aiConfig, collections);
+          const assignedCatId = analyzed.suggestedCategoryId || (activeCollection !== 'all' ? activeCollection : null);
+          const foundCat = collections.find(c => c.id === assignedCatId);
+
+          setShareItem({
+            id: String(Date.now()),
+            url: targetUrl,
+            title: analyzed.title,
+            description: analyzed.summary,
+            author: `@${analyzed.platform.toLowerCase()}`,
+            platform: analyzed.platform,
+            thumbnailUrl: null,
+            aiSummary: analyzed.summary,
+            isPinned: false,
+            savedAt: 'Только что',
+            tags: analyzed.tags,
+            collectionId: assignedCatId,
+            suggestedCategoryName: (foundCat && foundCat.id !== 'all') ? foundCat.name : null
+          });
+        } catch (e) {
+          console.error("Share mode analysis error:", e);
+        } finally {
+          setIsShareLoading(false);
+        }
+      };
+
+      const handleShareConfirmSave = () => {
+        if (!shareItem) return;
+        setItems(prev => [shareItem, ...prev]);
+        setShareSavedToast(true);
+
+        setTimeout(() => {
+          if (window.AndroidBridge && typeof window.AndroidBridge.closeApp === 'function') {
+            window.AndroidBridge.closeApp();
+          } else {
+            setIsShareMode(false);
+            setShareSavedToast(false);
+            setShareItem(null);
+          }
+        }, 700);
+      };
+
+      const closeShareWindow = () => {
+        if (window.AndroidBridge && typeof window.AndroidBridge.closeApp === 'function') {
+          window.AndroidBridge.closeApp();
+        } else {
+          setIsShareMode(false);
+          setShareItem(null);
+          setShareSavedToast(false);
+        }
+      };
+
       // Native Android Share Intent Listener
       useEffect(() => {
-        window.onReceiveSharedUrl = (rawText) => {
+        window.onReceiveSharedUrl = (rawText, fromShareMode = false) => {
           if (!rawText) return;
           const match = rawText.match(/https?:\/\/[^\s]+/i);
           const targetUrl = match ? match[0] : rawText.trim();
-          setUrlInput(targetUrl);
-          const inputEl = document.getElementById('url-input');
-          if (inputEl) inputEl.value = targetUrl;
-          handleAddUrl(targetUrl);
+
+          if (fromShareMode || window._pendingIsShareMode) {
+            window._pendingIsShareMode = false;
+            handleOpenShareMode(targetUrl);
+          } else {
+            setUrlInput(targetUrl);
+            const inputEl = document.getElementById('url-input');
+            if (inputEl) inputEl.value = targetUrl;
+            handleAddUrl(targetUrl);
+          }
         };
 
         if (window._pendingSharedUrl) {
-          window.onReceiveSharedUrl(window._pendingSharedUrl);
+          const pend = window._pendingSharedUrl;
+          const isShare = window._pendingIsShareMode || false;
           window._pendingSharedUrl = null;
+          window._pendingIsShareMode = false;
+          window.onReceiveSharedUrl(pend, isShare);
         }
       }, [collections, aiConfig, activeCollection]);
 
@@ -794,7 +1034,6 @@
       const filteredItems = useMemo(() => {
         return items.filter(it => {
           if (activeCollection !== 'all' && it.collectionId !== activeCollection) return false;
-          if (activeType !== 'all' && it.contentType !== activeType) return false;
           if (searchQuery.trim()) {
             const rawQ = searchQuery.toLowerCase().trim();
             const cleanQ = rawQ.replace(/^#/, '');
@@ -803,13 +1042,13 @@
           }
           return true;
         }).sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
-      }, [items, activeCollection, activeType, searchQuery]);
+      }, [items, activeCollection, searchQuery]);
 
       return (
         <div className="min-h-screen bg-black text-white flex flex-col pb-16 w-full max-w-full overflow-x-hidden">
           
-          {/* iOS Top Navigation Bar */}
-          <header className="sticky top-0 z-30 ios-glass border-b border-white/[0.08] w-full">
+          {/* iOS Top Navigation Bar - Solid OLED Pure Black */}
+          <header className="sticky top-0 z-30 bg-black border-b border-white/[0.08] w-full">
             <div className="w-full max-w-5xl mx-auto px-4 pt-3 pb-2 flex flex-col gap-2.5">
               
               {/* Row 1: Logo, AI Settings Button & Count */}
@@ -973,37 +1212,36 @@
                 </div>
               )}
 
-              {/* Apple Intelligence Preview Sheet */}
+              {/* Apple Intelligence Preview Sheet (Sleek Image-Free) */}
               {aiPreview && (
-                <div className="w-full mt-3 ios-card p-3.5 border-[#0A84FF]/40 bg-[#0A84FF]/[0.06] animate-fade-in">
-                  <div className="flex items-center justify-between mb-2.5">
+                <div className="w-full mt-3 p-3.5 rounded-[18px] border border-[#0A84FF]/40 bg-[#0A84FF]/[0.08] animate-fade-in shadow-lg">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-semibold text-[#0A84FF] flex items-center gap-1.5">
-                      <Icons.Sparkles className="w-3 h-3 text-[#0A84FF]" />
+                      <Icons.Sparkles className="w-3.5 h-3.5 text-[#0A84FF]" />
                       <span>Анализ ссылки завершён</span>
                     </span>
                     <button onClick={() => setAiPreview(null)} className="text-[#8E8E93] hover:text-white p-1">
-                      <Icons.Close className="w-3 h-3" />
+                      <Icons.Close className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="flex gap-3 items-start">
-                    <img src={aiPreview.thumbnailUrl} alt="" className="w-20 h-16 object-cover rounded-[12px] shadow-sm flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-[13px] leading-snug line-clamp-2 text-white">{aiPreview.title}</h4>
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="text-[10px] text-[#0A84FF] font-semibold bg-[#0A84FF]/20 px-2 py-0.5 rounded-full">
-                          {aiPreview.platform}
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-[14px] leading-snug line-clamp-2 text-white">{aiPreview.title}</h4>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] text-[#0A84FF] font-semibold bg-[#0A84FF]/20 px-2 py-0.5 rounded-full">
+                        {aiPreview.platform}
+                      </span>
+                      {aiPreview.tags.map(t => (
+                        <span key={t} className="text-[10px] text-[#8E8E93] bg-white/[0.06] px-1.5 py-0.5 rounded-full">
+                          #{t}
                         </span>
-                        {aiPreview.tags.map(t => (
-                          <span key={t} className="text-[10px] text-[#8E8E93] bg-white/[0.06] px-1.5 py-0.5 rounded-full">
-                            #{t}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-[11px] text-[#8E8E93] mt-2 p-2 rounded-[10px] bg-black/40 border border-white/[0.04] leading-relaxed">
+                      ))}
+                    </div>
+                    {aiPreview.aiSummary && (
+                      <p className="text-[11px] text-[#D1D1D6] p-2.5 rounded-[10px] bg-black/50 border border-white/[0.04] leading-relaxed">
                         {aiPreview.aiSummary}
                       </p>
-                    </div>
+                    )}
                   </div>
 
                   {/* Category Selector with AI Auto-Detect */}
@@ -1052,37 +1290,9 @@
               )}
             </div>
 
-            {/* Content Type Filter Pills */}
-            <div className="w-full mb-4 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5">
-              <div className="flex items-center gap-1 p-1 rounded-[12px] bg-[#1C1C1E] border border-white/[0.06] flex-shrink-0">
-                {CONTENT_TYPES.map(type => (
-                  <button
-                    key={type.id}
-                    onClick={() => setActiveType(type.id)}
-                    className={`px-3 py-1 rounded-[8px] text-[11px] font-medium transition-all ${
-                      activeType === type.id
-                        ? 'bg-[#2C2C2E] text-white shadow-sm'
-                        : 'text-[#8E8E93] hover:text-white'
-                    }`}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-
-              {activeCollection !== 'all' && (
-                <button
-                  onClick={() => setActiveCollection('all')}
-                  className="text-[11px] text-[#0A84FF] hover:underline whitespace-nowrap flex-shrink-0"
-                >
-                  Все папки
-                </button>
-              )}
-            </div>
-
             {/* Clean Responsive Cards Grid or Empty State */}
             {filteredItems.length === 0 ? (
-              <div className="w-full py-16 px-4 flex flex-col items-center justify-center text-center ios-card bg-[#1C1C1E]/50 border border-white/[0.06] rounded-[24px] my-4 animate-fade-in">
+              <div className="w-full py-16 px-4 flex flex-col items-center justify-center text-center bg-[#1C1C1E]/50 border border-white/[0.06] rounded-[24px] my-4 animate-fade-in">
                 <div className="w-14 h-14 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-[#8E8E93] mb-3">
                   {searchQuery ? (
                     <Icons.Search className="w-6 h-6 text-[#0A84FF]" />
@@ -1102,12 +1312,11 @@
                     ? 'Попробуйте изменить поисковый запрос или сбросить активные фильтры'
                     : 'Вставьте ссылку в поле выше или отправьте её через кнопку «Поделиться»'}
                 </p>
-                {(searchQuery || activeCollection !== 'all' || activeType !== 'all') && (
+                {(searchQuery || activeCollection !== 'all') && (
                   <button
                     onClick={() => {
                       setSearchQuery('');
                       setActiveCollection('all');
-                      setActiveType('all');
                     }}
                     className="px-3.5 py-1.5 rounded-[10px] bg-[#0A84FF]/15 text-[#0A84FF] hover:bg-[#0A84FF] hover:text-white transition-all text-[11px] font-semibold"
                   >
@@ -1116,161 +1325,135 @@
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 w-full">
                 {filteredItems.map(item => {
-                const categoryInfo = getCategoryInfo(item.collectionId);
-                const FolderIcon = categoryInfo.Icon;
-                const isSummaryOpen = activeSummaryId === item.id;
+                  const categoryInfo = getCategoryInfo(item.collectionId);
+                  const FolderIcon = categoryInfo.Icon;
 
-                return (
-                  <div key={item.id} className="ios-card overflow-hidden group flex flex-col w-full">
-                    {/* Media Thumbnail (Tap to Open Link!) */}
-                    {item.thumbnailUrl && (
-                      <div
-                        onClick={() => openExternalUrl(item.url)}
-                        className="relative aspect-[16/9] w-full overflow-hidden bg-black/40 cursor-pointer"
-                        title="Нажмите, чтобы открыть ссылку"
-                      >
-                        <img
-                          src={item.thumbnailUrl}
-                          alt=""
-                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                          loading="lazy"
-                        />
+                  return (
+                    <div
+                      key={item.id}
+                      className="p-4 flex flex-col w-full bg-[#1C1C1E] border border-white/[0.08] rounded-[20px] shadow-md hover:border-white/[0.14] transition-all"
+                    >
+                      {/* Top Badges: Category & Platform */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <div className={`px-2 py-0.5 rounded-[8px] text-[11px] font-medium flex items-center gap-1 border ${
+                            categoryInfo.isAssigned
+                              ? 'bg-[#0A84FF]/10 text-[#0A84FF] border-[#0A84FF]/25'
+                              : 'bg-white/[0.04] text-[#8E8E93] border-white/[0.06]'
+                          }`}>
+                            <FolderIcon className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate max-w-[120px]">{categoryInfo.name}</span>
+                          </div>
 
-                        {/* Folder Status Pill */}
-                        <div className="absolute top-2.5 left-2.5">
-                          {categoryInfo.isAssigned ? (
-                            <div className="px-2 py-1 rounded-[8px] text-[10px] font-medium bg-black/70 backdrop-blur-md flex items-center gap-1.5 border border-white/10 text-white shadow-sm">
-                              <FolderIcon className="w-3 h-3 text-[#0A84FF]" />
-                              <span>{categoryInfo.name}</span>
-                            </div>
-                          ) : (
-                            <div className="px-2 py-1 rounded-[8px] text-[10px] font-medium bg-black/70 backdrop-blur-md flex items-center gap-1.5 border border-white/10 text-[#8E8E93] shadow-sm">
-                              <Icons.Folder className="w-3 h-3 text-[#8E8E93]" />
-                              <span>Не сортировано</span>
-                            </div>
-                          )}
+                          <span className="text-[10px] font-semibold text-[#8E8E93] px-1.5 py-0.5 rounded bg-white/[0.04]">
+                            {item.platform}
+                          </span>
                         </div>
 
-                        {/* Pinned Star */}
                         {item.isPinned && (
-                          <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs shadow-md">
-                            <Icons.Star className="w-3 h-3 fill-current text-white" />
-                          </div>
+                          <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                            <Icons.Star className="w-3 h-3 fill-current" />
+                          </span>
                         )}
-                      </div>
-                    )}
-
-                    {/* Card Content Body */}
-                    <div className="p-3.5 flex flex-col flex-1">
-                      
-                      {/* Author & Source */}
-                      <div className="flex items-center justify-between mb-1.5 text-[11px] text-[#8E8E93]">
-                        <span className="font-medium text-white/80 truncate max-w-[70%]">{item.author}</span>
-                        <span className="text-[10px] font-semibold text-[#0A84FF] px-1.5 py-0.5 rounded bg-[#0A84FF]/10">{item.platform}</span>
                       </div>
 
                       {/* Clickable Title (Tapping opens external link directly) */}
                       <h3
                         onClick={() => openExternalUrl(item.url)}
                         className="text-[15px] font-semibold tracking-tight leading-snug line-clamp-2 mb-2 text-white hover:text-[#0A84FF] active:opacity-75 transition-colors cursor-pointer"
-                        title="Открыть публикацию"
+                        title="Нажмите, чтобы открыть ссылку"
                       >
                         {item.title}
                       </h3>
 
-                      {/* AI Summary Pill */}
+                      {/* AI Summary Block (Always Clean & Visible) */}
                       {item.aiSummary && (
-                        <div className="mb-2.5">
-                          <button
-                            onClick={() => setActiveSummaryId(isSummaryOpen ? null : item.id)}
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-[#0A84FF] hover:underline"
-                          >
-                            <Icons.Sparkles className="w-3 h-3 text-[#0A84FF]" />
-                            <span>{isSummaryOpen ? 'Скрыть саммари' : 'AI-Саммари'}</span>
-                          </button>
-                          {isSummaryOpen && (
-                            <div className="mt-1.5 p-2 rounded-[10px] bg-[#0A84FF]/[0.08] border border-[#0A84FF]/20 text-[11px] leading-relaxed text-[#E5E5EA] animate-fade-in">
-                              {item.aiSummary}
-                            </div>
-                          )}
+                        <div className="mb-2.5 p-2.5 rounded-[12px] bg-[#0A84FF]/[0.06] border border-[#0A84FF]/15 text-[12px] leading-relaxed text-[#D1D1D6]">
+                          <div className="flex items-center gap-1 text-[10px] font-semibold text-[#0A84FF] uppercase tracking-wider mb-0.5">
+                            <Icons.Sparkles className="w-2.5 h-2.5 text-[#0A84FF]" />
+                            <span>Выжимка ИИ</span>
+                          </div>
+                          <div>{item.aiSummary}</div>
                         </div>
                       )}
 
                       {/* Interactive Tags (Clicking filters by tag) */}
-                      <div className="flex flex-wrap gap-1 mt-auto pt-1">
-                        {item.tags.map((tag, i) => {
-                          const cleanTag = tag.replace(/^#/, '').trim();
-                          const isTagActive = searchQuery.toLowerCase().replace(/^#/, '').trim() === cleanTag.toLowerCase();
-                          return (
-                            <button
-                              type="button"
-                              key={i}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleTagClick(cleanTag);
-                              }}
-                              className={`px-1.5 py-0.5 rounded-[6px] text-[10px] font-medium transition-all ${
-                                isTagActive
-                                  ? 'bg-[#0A84FF] text-white shadow-sm ring-1 ring-white/20'
-                                  : 'bg-white/[0.06] text-[#8E8E93] hover:text-white hover:bg-white/10 active:scale-95'
-                              }`}
-                              title={`Фильтровать по тегу #${cleanTag}`}
-                            >
-                              #{cleanTag}
-                            </button>
-                          );
-                        })}
-                      </div>
+                      {item.tags && item.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2.5">
+                          {item.tags.map((tag, i) => {
+                            const cleanTag = tag.replace(/^#/, '').trim();
+                            const isTagActive = searchQuery.toLowerCase().replace(/^#/, '').trim() === cleanTag.toLowerCase();
+                            return (
+                              <button
+                                type="button"
+                                key={i}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTagClick(cleanTag);
+                                }}
+                                className={`px-2 py-0.5 rounded-[6px] text-[10px] font-medium transition-all ${
+                                  isTagActive
+                                    ? 'bg-[#0A84FF] text-white shadow-sm'
+                                    : 'bg-white/[0.04] text-[#8E8E93] hover:text-white hover:bg-white/10 active:scale-95'
+                                }`}
+                                title={`Фильтровать по тегу #${cleanTag}`}
+                              >
+                                #{cleanTag}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
 
-                      {/* Footer Actions: Explicit "Открыть" button */}
-                      <div className="flex items-center justify-between pt-2.5 mt-3 border-t border-white/[0.06] text-[11px] text-[#8E8E93]">
-                        <span className="flex items-center gap-1 text-[10px]">
-                          <Icons.Clock className="w-2.5 h-2.5 text-[#8E8E93]" />
+                      {/* Card Footer: Saved time, Pin, Delete & Open Buttons */}
+                      <div className="flex items-center justify-between pt-2.5 mt-auto border-t border-white/[0.06] text-[11px] text-[#8E8E93]">
+                        <div className="flex items-center gap-1.5 text-[10px] text-[#8E8E93]">
+                          <Icons.Clock className="w-3 h-3" />
                           <span>{item.savedAt}</span>
-                        </span>
-                        
-                        <div className="flex items-center gap-1.5">
+                          <span className="opacity-40">•</span>
+                          <span className="truncate max-w-[90px]">{item.author}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
                           <button
                             onClick={() => togglePin(item.id)}
-                            className={`p-1.5 rounded-md hover:bg-white/[0.08] transition-colors ${item.isPinned ? 'text-amber-400' : 'text-[#8E8E93] hover:text-white'}`}
+                            className={`p-1.5 rounded-[7px] hover:bg-white/[0.08] transition-colors ${item.isPinned ? 'text-amber-400' : 'text-[#8E8E93] hover:text-white'}`}
                             title={item.isPinned ? 'Открепить' : 'Закрепить'}
                           >
                             <Icons.Star className="w-3.5 h-3.5 fill-current" />
                           </button>
-                          
-                          {/* Large reliable Open Link Button */}
-                          <button
-                            onClick={() => openExternalUrl(item.url)}
-                            className="px-2.5 py-1 rounded-[8px] bg-[#0A84FF]/15 hover:bg-[#0A84FF] text-[#0A84FF] hover:text-white transition-all flex items-center gap-1 text-[11px] font-semibold active:scale-95"
-                            title="Открыть оригинал ссылки"
-                          >
-                            <span>Открыть</span>
-                            <Icons.External className="w-3 h-3" />
-                          </button>
 
                           <button
                             onClick={() => deleteItem(item.id)}
-                            className="p-1.5 rounded-md hover:bg-white/[0.08] text-[#8E8E93] hover:text-[#FF453A] transition-colors"
+                            className="p-1.5 rounded-[7px] hover:bg-white/[0.08] text-[#8E8E93] hover:text-[#FF453A] transition-colors"
                             title="Удалить"
                           >
                             <Icons.Trash className="w-3.5 h-3.5" />
                           </button>
+
+                          <button
+                            onClick={() => openExternalUrl(item.url)}
+                            className="px-2.5 py-1 rounded-[8px] bg-[#0A84FF]/15 hover:bg-[#0A84FF] text-[#0A84FF] hover:text-white transition-all flex items-center gap-1 text-[11px] font-semibold active:scale-95 ml-1"
+                            title="Открыть публикацию"
+                          >
+                            <span>Открыть</span>
+                            <Icons.External className="w-3 h-3" />
+                          </button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
               </div>
             )}
           </main>
 
           {/* Modal 1: Category Management (Create & Delete) */}
           {isManagingCategories && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-              <div className="w-full max-w-md ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-md rounded-[24px] p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <Icons.Folder className="w-4 h-4 text-[#0A84FF]" />
@@ -1351,7 +1534,7 @@
 
                       <div>
                         <span className="block text-[11px] text-[#8E8E93] mb-1.5">Векторная иконка:</span>
-                        <div className="grid grid-cols-7 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-black/40 rounded-[12px] border border-white/5">
+                        <div className="grid grid-cols-7 gap-1.5 max-h-40 overflow-y-auto p-1.5 bg-black/40 rounded-[12px] border border-white/5">
                           {AVAILABLE_ICONS.map(ic => {
                             const IconComponent = (ic && typeof ic.Comp === 'function') ? ic.Comp : (Icons[ic.id] || Icons.Folder);
                             const isSelected = selectedIconId === ic.id;
@@ -1360,10 +1543,10 @@
                                 type="button"
                                 key={ic.id}
                                 onClick={() => setSelectedIconId(ic.id)}
-                                className={`p-2 rounded-[8px] flex items-center justify-center transition-all ${
+                                className={`p-2 rounded-[8px] flex items-center justify-center transition-colors active:scale-95 ${
                                   isSelected
-                                    ? 'bg-[#0A84FF] text-white ring-2 ring-[#0A84FF]/40'
-                                    : 'text-[#8E8E93] hover:text-white hover:bg-white/10'
+                                    ? 'bg-[#0A84FF] text-white shadow-sm'
+                                    : 'text-[#8E8E93] hover:text-white bg-white/[0.03]'
                                 }`}
                                 title={ic.label}
                               >
@@ -1391,8 +1574,8 @@
 
           {/* Modal 2: Custom iOS Confirmation Modal for Category Deletion */}
           {categoryToDelete && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-              <div className="w-full max-w-xs ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl text-center rounded-[24px]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-xs rounded-[24px] p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl text-center">
                 <div className="w-12 h-12 rounded-full bg-rose-500/15 text-rose-500 mx-auto flex items-center justify-center mb-3">
                   <Icons.Trash className="w-6 h-6" />
                 </div>
@@ -1420,8 +1603,8 @@
 
           {/* Modal 3: AI Configuration (Gemma / Gemini / Built-in Free) */}
           {isAiSettingsOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-              <div className="w-full max-w-md ios-card p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-md rounded-[24px] p-5 bg-[#1C1C1E] border border-white/[0.12] shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <Icons.Sparkles className="w-4 h-4 text-[#0A84FF]" />
@@ -1597,6 +1780,144 @@
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* Modal 4: Dedicated Quick-Save Share Window ("Спец. окно для функции поделиться") */}
+          {isShareMode && (
+            <div className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-center bg-black/85 backdrop-blur-xl p-0 sm:p-4 animate-fade-in">
+              <div className="w-full sm:max-w-md bg-[#1C1C1E] border-t sm:border border-white/[0.12] rounded-t-[28px] sm:rounded-[24px] p-5 shadow-2xl flex flex-col max-h-[90vh]">
+                
+                {/* Sheet Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#0A84FF] to-[#0051D5] flex items-center justify-center text-white shadow-md shadow-[#0A84FF]/25 flex-shrink-0">
+                      <Icons.Bookmark className="w-4 h-4 fill-current" />
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-bold text-white leading-tight">Сохранить в закладки</h3>
+                      <span className="text-[10px] text-[#8E8E93]">Быстрое добавление через «Поделиться»</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={closeShareWindow}
+                    className="p-1.5 rounded-full text-[#8E8E93] hover:text-white bg-white/5 active:scale-95 transition-colors"
+                    title="Закрыть"
+                  >
+                    <Icons.Close className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Sheet Body */}
+                <div className="py-4 space-y-3.5 overflow-y-auto">
+                  
+                  {/* Link Preview Bar */}
+                  <div className="p-2.5 rounded-[12px] bg-black/40 border border-white/5 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="px-2 py-0.5 rounded-[6px] text-[10px] font-semibold bg-[#0A84FF]/20 text-[#0A84FF] flex-shrink-0">
+                        {shareItem ? shareItem.platform : 'Web'}
+                      </span>
+                      <span className="text-[11px] text-[#8E8E93] truncate font-mono">
+                        {shareItem ? shareItem.url : ''}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Loading State or Analyzed Result */}
+                  {isShareLoading ? (
+                    <div className="py-8 flex flex-col items-center justify-center text-center">
+                      <div className="w-9 h-9 rounded-full border-2 border-[#0A84FF] border-t-transparent animate-spin mb-3"></div>
+                      <p className="text-[13px] font-semibold text-white">ИИ анализирует публикацию...</p>
+                      <p className="text-[11px] text-[#8E8E93] mt-1">Определяем заголовок, краткую суть и категорию</p>
+                    </div>
+                  ) : shareItem ? (
+                    <div className="space-y-3 animate-fade-in">
+                      {/* Title */}
+                      <div>
+                        <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-1">
+                          Заголовок
+                        </label>
+                        <h4 className="text-[14px] font-semibold text-white leading-snug">
+                          {shareItem.title}
+                        </h4>
+                      </div>
+
+                      {/* AI Summary */}
+                      {shareItem.aiSummary && (
+                        <div className="p-3 rounded-[12px] bg-[#0A84FF]/[0.08] border border-[#0A84FF]/20 text-[12px] leading-relaxed text-[#D1D1D6]">
+                          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#0A84FF] uppercase tracking-wider mb-1">
+                            <Icons.Sparkles className="w-3 h-3 text-[#0A84FF]" />
+                            <span>Выжимка ИИ</span>
+                          </div>
+                          <div>{shareItem.aiSummary}</div>
+                        </div>
+                      )}
+
+                      {/* Category Selector with AI Auto-Match */}
+                      <div className="p-3 rounded-[12px] bg-black/40 border border-white/5 space-y-2">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-[#8E8E93] flex items-center gap-1.5 font-medium">
+                            <Icons.Folder className="w-3.5 h-3.5 text-[#0A84FF]" />
+                            <span>Папка для сохранения:</span>
+                          </span>
+                          {shareItem.suggestedCategoryName && (
+                            <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-medium">
+                              ✦ ИИ выбрал: {shareItem.suggestedCategoryName}
+                            </span>
+                          )}
+                        </div>
+
+                        <select
+                          value={shareItem.collectionId || ''}
+                          onChange={(e) => {
+                            const val = e.target.value || null;
+                            const cat = collections.find(c => c.id === val);
+                            setShareItem({ ...shareItem, collectionId: val, suggestedCategoryName: cat ? cat.name : null });
+                          }}
+                          className="w-full h-10 px-3 rounded-[10px] bg-[#2C2C2E] text-white text-[13px] font-medium border border-white/10 outline-none focus:border-[#0A84FF]"
+                        >
+                          <option value="">Не сортировано</option>
+                          {collections.filter(c => c && c.id !== 'all').map(col => (
+                            <option key={col.id} value={col.id}>
+                              {col.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {/* Saved Toast */}
+                  {shareSavedToast && (
+                    <div className="p-3 rounded-[12px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center gap-2 text-[13px] font-semibold animate-fade-in">
+                      <span>✓</span>
+                      <span>Закладка успешно сохранена!</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="pt-3 border-t border-white/[0.08] flex gap-2">
+                  <button
+                    onClick={closeShareWindow}
+                    disabled={isShareLoading || shareSavedToast}
+                    className="flex-1 h-11 rounded-[12px] bg-white/[0.08] hover:bg-white/[0.12] disabled:opacity-40 text-white font-medium text-[13px] transition-colors"
+                  >
+                    Отмена
+                  </button>
+                  <button
+                    onClick={handleShareConfirmSave}
+                    disabled={isShareLoading || shareSavedToast || !shareItem}
+                    className="flex-1 h-11 rounded-[12px] bg-[#0A84FF] hover:bg-[#0071E3] disabled:opacity-40 text-white font-semibold text-[13px] transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5"
+                  >
+                    {shareSavedToast ? (
+                      <span>✓ Сохранено</span>
+                    ) : (
+                      <span>Сохранить в закладки</span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}

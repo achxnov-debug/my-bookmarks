@@ -74,6 +74,17 @@ class MainActivity : AppCompatActivity() {
             // Optional chrome client customizations
         }
 
+        window.statusBarColor = android.graphics.Color.BLACK
+        window.navigationBarColor = android.graphics.Color.BLACK
+
+        // Bridge to allow web app to close the activity after quick saving a shared link
+        webView.addJavascriptInterface(object {
+            @android.webkit.JavascriptInterface
+            fun closeApp() {
+                runOnUiThread { finish() }
+            }
+        }, "AndroidBridge")
+
         // Load bundled standalone offline web app
         webView.loadUrl("file:///android_asset/index.html")
 
@@ -113,9 +124,10 @@ class MainActivity : AppCompatActivity() {
                 val script = """
                     (function() {
                         if (window.onReceiveSharedUrl) {
-                            window.onReceiveSharedUrl($escaped);
+                            window.onReceiveSharedUrl($escaped, true);
                         } else {
                             window._pendingSharedUrl = $escaped;
+                            window._pendingIsShareMode = true;
                         }
                     })();
                 """.trimIndent()
