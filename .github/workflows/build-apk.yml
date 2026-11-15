@@ -5,12 +5,16 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -18,17 +22,28 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
+    - name: Setup Gradle 8.5
       uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.5'
 
     - name: Build Debug APK
       run: |
         cd android
-        chmod +x gradlew || true
-        gradle assembleDebug
+        gradle assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Мои-Закладки-Debug-APK
+        name: bookmarks-app-debug
         path: android/app/build/outputs/apk/debug/*.apk
+
+    - name: Create Release with APK
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.0
+        name: "Мои Закладки v1.0.0 (Android APK)"
+        body: "Готовый Android APK файл для приложения «Мои закладки». Скачайте и установите на телефон."
+        files: android/app/build/outputs/apk/debug/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
