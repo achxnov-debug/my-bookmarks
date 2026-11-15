@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         settings.setSupportZoom(false)
         settings.textZoom = 100
         settings.setSupportMultipleWindows(false)
+        settings.allowFileAccessFromFileURLs = true
+        settings.allowUniversalAccessFromFileURLs = true
 
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
