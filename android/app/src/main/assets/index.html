@@ -1049,77 +1049,47 @@
           
           {/* iOS Top Navigation Bar - Solid OLED Pure Black */}
           <header className="sticky top-0 z-30 bg-black border-b border-white/[0.08] w-full">
-            <div className="w-full max-w-5xl mx-auto px-4 pt-3 pb-2 flex flex-col gap-2.5">
+            <div className="w-full max-w-5xl mx-auto px-4 pt-3 pb-2 flex flex-col gap-2">
               
-              {/* Row 1: Logo, AI Settings Button & Count */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#0A84FF] to-[#0051D5] flex items-center justify-center text-white shadow-md shadow-[#0A84FF]/25 flex-shrink-0">
-                    <Icons.Bookmark className="w-4 h-4 fill-current" />
-                  </div>
-                  <div className="flex flex-col">
-                    <h1 className="text-[16px] font-bold tracking-tight leading-tight text-white">Мои закладки</h1>
-                    <span className="text-[10px] text-[#8E8E93] font-medium flex items-center gap-1">
-                      {aiConfig.apiKey ? (
-                        <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                          <span className="text-emerald-400 font-medium">{aiConfig.model}</span>
-                        </>
-                      ) : (
-                        <span>Бесплатный AI-анализ</span>
-                      )}
-                    </span>
-                  </div>
+              {/* Row 1: Spotlight Search Bar + Compact AI Settings Button */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={filteredItems.length ? `Поиск среди ${filteredItems.length} закладок...` : "Поиск по смыслу или тегам..."}
+                    className="w-full h-10 pl-9 pr-8 rounded-[12px] bg-[#1C1C1E] text-[13px] text-white placeholder-[#8E8E93] focus:outline-none focus:ring-1 focus:ring-[#0A84FF]/50 border border-white/[0.08] transition-all"
+                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]">
+                    <Icons.Search className="w-4 h-4" />
+                  </span>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8E8E93] hover:text-white p-1"
+                    >
+                      <Icons.Close className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {/* AI Settings Button */}
-                  <button
-                    onClick={openAiSettings}
-                    className={`px-2.5 py-1.5 rounded-[10px] text-[11px] font-medium transition-all flex items-center gap-1.5 border ${
-                      aiConfig.apiKey
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
-                        : 'bg-[#0A84FF]/10 border-[#0A84FF]/30 text-[#0A84FF] hover:bg-[#0A84FF]/20'
-                    }`}
-                    title="Настройки ИИ API (Gemma / Gemini)"
-                  >
-                    <Icons.Sparkles className="w-3.5 h-3.5" />
-                    <span>{aiConfig.apiKey ? 'ИИ активен' : 'ИИ API'}</span>
-                  </button>
-
-                  {/* Bookmark Count Badge */}
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/[0.06] text-[11px] text-[#8E8E93] font-medium border border-white/[0.05]">
-                    <span>{filteredItems.length}</span>
-                  </div>
-                </div>
+                {/* Compact AI Settings Icon Button */}
+                <button
+                  onClick={openAiSettings}
+                  className={`w-10 h-10 rounded-[12px] flex items-center justify-center border transition-all active:scale-95 flex-shrink-0 ${
+                    aiConfig.apiKey
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                      : 'bg-[#1C1C1E] border-white/[0.08] text-[#8E8E93] hover:text-[#0A84FF]'
+                  }`}
+                  title="Настройки ИИ по API (Gemma / Gemini)"
+                >
+                  <Icons.Sparkles className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Row 2: Full-Width Mobile Spotlight Search */}
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Поиск по смыслу, темам или тегам..."
-                  className="w-full h-9 pl-9 pr-8 rounded-[12px] bg-[#1C1C1E] text-[13px] text-white placeholder-[#8E8E93] focus:outline-none focus:ring-2 focus:ring-[#0A84FF]/50 border border-white/[0.08] transition-all"
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]">
-                  <Icons.Search className="w-3.5 h-3.5" />
-                </span>
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8E8E93] hover:text-white p-1"
-                  >
-                    <Icons.Close className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Row 3: Horizontal Scrollable Categories Bar (Clean Start!) */}
-            <div className="w-full border-t border-white/[0.04]">
-              <div className="w-full max-w-5xl mx-auto px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+              {/* Row 2: Horizontal Scrollable Categories Bar */}
+              <div className="w-full pt-0.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
                 {collections.map(col => {
                   const CategoryIcon = getCategoryIconComp(col.iconId);
                   const isActive = activeCollection === col.id;
@@ -1244,32 +1214,53 @@
                     )}
                   </div>
 
-                  {/* Category Selector with AI Auto-Detect */}
-                  <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex items-center justify-between gap-2 flex-wrap text-[11px]">
-                    <div className="flex items-center gap-1.5 text-[#8E8E93]">
-                      <Icons.Folder className="w-3.5 h-3.5 text-[#0A84FF]" />
-                      <span>Папка:</span>
+                  {/* Category Selector with AI Auto-Detect (Custom In-App Pills) */}
+                  <div className="mt-2.5 pt-2 border-t border-white/[0.08] space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[#8E8E93] flex items-center gap-1.5 font-medium">
+                        <Icons.Folder className="w-3.5 h-3.5 text-[#0A84FF]" />
+                        <span>Папка для сохранения:</span>
+                      </span>
                       {aiPreview.suggestedCategoryName && (
                         <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20 font-medium">
                           ✦ ИИ выбрал: {aiPreview.suggestedCategoryName}
                         </span>
                       )}
                     </div>
-                    <select
-                      value={aiPreview.collectionId || ''}
-                      onChange={(e) => {
-                        const val = e.target.value || null;
-                        setAiPreview({ ...aiPreview, collectionId: val, suggestedCategoryName: null });
-                      }}
-                      className="bg-[#2C2C2E] text-white text-[11px] font-medium px-2 py-1 rounded-[8px] border border-white/10 outline-none focus:border-[#0A84FF]"
-                    >
-                      <option value="">Не сортировано</option>
-                      {collections.filter(c => c && c.id !== 'all').map(col => (
-                        <option key={col.id} value={col.id}>
-                          {col.name}
-                        </option>
-                      ))}
-                    </select>
+
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                      <button
+                        type="button"
+                        onClick={() => setAiPreview({ ...aiPreview, collectionId: null, suggestedCategoryName: null })}
+                        className={`px-2.5 py-1 rounded-[8px] text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 ${
+                          !aiPreview.collectionId
+                            ? 'bg-[#0A84FF] text-white shadow-sm'
+                            : 'bg-[#2C2C2E] text-[#8E8E93] hover:text-white border border-white/5'
+                        }`}
+                      >
+                        <Icons.Folder className="w-3 h-3" />
+                        <span>Не сортировано</span>
+                      </button>
+                      {collections.filter(c => c && c.id !== 'all').map(col => {
+                        const CatIcon = getCategoryIconComp(col.iconId);
+                        const isSelected = aiPreview.collectionId === col.id;
+                        return (
+                          <button
+                            type="button"
+                            key={col.id}
+                            onClick={() => setAiPreview({ ...aiPreview, collectionId: col.id, suggestedCategoryName: col.name })}
+                            className={`px-2.5 py-1 rounded-[8px] text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 ${
+                              isSelected
+                                ? 'bg-[#0A84FF] text-white shadow-sm'
+                                : 'bg-[#2C2C2E] text-[#8E8E93] hover:text-white border border-white/5'
+                            }`}
+                          >
+                            <CatIcon className="w-3 h-3" />
+                            <span>{col.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-2 mt-3 pt-2.5 border-t border-white/[0.08]">
@@ -1786,10 +1777,10 @@
 
           {/* Modal 4: Dedicated Quick-Save Share Window ("Спец. окно для функции поделиться") */}
           {isShareMode && (
-            <div className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-center bg-black/85 backdrop-blur-xl p-0 sm:p-4 animate-fade-in">
-              <div className="w-full sm:max-w-md bg-[#1C1C1E] border-t sm:border border-white/[0.12] rounded-t-[28px] sm:rounded-[24px] p-5 shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+              <div className="w-full max-w-md bg-[#1C1C1E] border border-white/[0.12] rounded-[24px] p-5 shadow-2xl flex flex-col max-h-[90vh]">
                 
-                {/* Sheet Header */}
+                {/* Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#0A84FF] to-[#0051D5] flex items-center justify-center text-white shadow-md shadow-[#0A84FF]/25 flex-shrink-0">
@@ -1809,7 +1800,7 @@
                   </button>
                 </div>
 
-                {/* Sheet Body */}
+                {/* Body */}
                 <div className="py-4 space-y-3.5 overflow-y-auto">
                   
                   {/* Link Preview Bar */}
@@ -1854,7 +1845,7 @@
                         </div>
                       )}
 
-                      {/* Category Selector with AI Auto-Match */}
+                      {/* Category Selector with AI Auto-Match (Custom In-App Pills) */}
                       <div className="p-3 rounded-[12px] bg-black/40 border border-white/5 space-y-2">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-[#8E8E93] flex items-center gap-1.5 font-medium">
@@ -1868,22 +1859,39 @@
                           )}
                         </div>
 
-                        <select
-                          value={shareItem.collectionId || ''}
-                          onChange={(e) => {
-                            const val = e.target.value || null;
-                            const cat = collections.find(c => c.id === val);
-                            setShareItem({ ...shareItem, collectionId: val, suggestedCategoryName: cat ? cat.name : null });
-                          }}
-                          className="w-full h-10 px-3 rounded-[10px] bg-[#2C2C2E] text-white text-[13px] font-medium border border-white/10 outline-none focus:border-[#0A84FF]"
-                        >
-                          <option value="">Не сортировано</option>
-                          {collections.filter(c => c && c.id !== 'all').map(col => (
-                            <option key={col.id} value={col.id}>
-                              {col.name}
-                            </option>
-                          ))}
-                        </select>
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                          <button
+                            type="button"
+                            onClick={() => setShareItem({ ...shareItem, collectionId: null, suggestedCategoryName: null })}
+                            className={`px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 ${
+                              !shareItem.collectionId
+                                ? 'bg-[#0A84FF] text-white shadow-sm'
+                                : 'bg-[#2C2C2E] text-[#8E8E93] hover:text-white border border-white/5'
+                            }`}
+                          >
+                            <Icons.Folder className="w-3 h-3" />
+                            <span>Не сортировано</span>
+                          </button>
+                          {collections.filter(c => c && c.id !== 'all').map(col => {
+                            const CatIcon = getCategoryIconComp(col.iconId);
+                            const isSelected = shareItem.collectionId === col.id;
+                            return (
+                              <button
+                                type="button"
+                                key={col.id}
+                                onClick={() => setShareItem({ ...shareItem, collectionId: col.id, suggestedCategoryName: col.name })}
+                                className={`px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition-all whitespace-nowrap flex items-center gap-1 ${
+                                  isSelected
+                                    ? 'bg-[#0A84FF] text-white shadow-sm'
+                                    : 'bg-[#2C2C2E] text-[#8E8E93] hover:text-white border border-white/5'
+                                }`}
+                              >
+                                <CatIcon className="w-3 h-3" />
+                                <span>{col.name}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   ) : null}
