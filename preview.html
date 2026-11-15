@@ -268,12 +268,45 @@
         <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
         </svg>
+      ),
+      Rocket: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+          <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+          <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+          <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+        </svg>
+      ),
+      Globe: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      ),
+      Camera: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+          <circle cx="12" cy="13" r="3"/>
+        </svg>
+      ),
+      Coffee: ({ className = "w-3.5 h-3.5" }) => (
+        <svg className={`${className} stroke-current`} viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+          <line x1="6" y1="1" x2="6" y2="4"/>
+          <line x1="10" y1="1" x2="10" y2="4"/>
+          <line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
       )
     };
 
     // 24 Vector Icons for Category Creator
     const AVAILABLE_ICONS = [
       { id: 'Rocket', label: 'Ракета', Comp: Icons.Rocket },
+      { id: 'Globe', label: 'Интернет', Comp: Icons.Globe },
+      { id: 'Camera', label: 'Фото', Comp: Icons.Camera },
+      { id: 'Coffee', label: 'Кофе', Comp: Icons.Coffee },
       { id: 'Food', label: 'Еда', Comp: Icons.Food },
       { id: 'Design', label: 'Дизайн', Comp: Icons.Design },
       { id: 'Code', label: 'Код', Comp: Icons.Code },
@@ -514,7 +547,9 @@
 
       const getCategoryIconComp = (iconId) => {
         const found = AVAILABLE_ICONS.find(i => i.id === iconId);
-        return found ? found.Comp : (Icons[iconId] || Icons.Folder);
+        if (found && typeof found.Comp === 'function') return found.Comp;
+        if (Icons[iconId] && typeof Icons[iconId] === 'function') return Icons[iconId];
+        return Icons.Folder;
       };
 
       const getCategoryInfo = (collectionId) => {
@@ -1121,7 +1156,7 @@
                         <span className="block text-[11px] text-[#8E8E93] mb-1.5">Векторная иконка:</span>
                         <div className="grid grid-cols-7 gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-black/40 rounded-[12px] border border-white/5">
                           {AVAILABLE_ICONS.map(ic => {
-                            const IconComponent = ic.Comp;
+                            const IconComponent = (ic && typeof ic.Comp === 'function') ? ic.Comp : (Icons[ic.id] || Icons.Folder);
                             const isSelected = selectedIconId === ic.id;
                             return (
                               <button
