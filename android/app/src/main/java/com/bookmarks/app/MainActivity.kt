@@ -2,7 +2,10 @@ package com.bookmarks.app
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -24,14 +27,49 @@ class MainActivity : AppCompatActivity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.databaseEnabled = true
-        settings.loadWithOverviewMode = true
-        settings.useWideViewPort = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
+        
+        // Exact mobile viewport matching device display pixels
+        settings.useWideViewPort = false
+        settings.loadWithOverviewMode = false
+        settings.displayZoomControls = false
+        settings.builtInZoomControls = false
+        settings.setSupportZoom(false)
+        settings.textZoom = 100
+        settings.setSupportMultipleWindows(false)
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                return false
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val url = request?.url?.toString() ?: return false
+                return openExternalUrl(url)
             }
+
+            @Deprecated("Deprecated in Java")
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                url ?: return false
+                return openExternalUrl(url)
+            }
+
+            private fun openExternalUrl(url: String): Boolean {
+                // Keep local app assets inside the WebView
+                if (url.startsWith("file:///android_asset/") || url.startsWith("file://android_asset/")) {
+                    return false
+                }
+                
+                // Open any external web links (http, https, intent) in system browser or native apps
+                return try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        }
+
+        webView.webChromeClient = object : WebChromeClient() {
+            // Optional chrome client customizations
         }
 
         // Load bundled standalone offline web app
@@ -48,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // Handle "Share" intent from other apps (Instagram, TikTok, YouTube, X)
+        // Handle "Share" intent from other apps (Instagram, TikTok, YouTube, X, Threads)
         handleSendIntent(intent)
     }
 
