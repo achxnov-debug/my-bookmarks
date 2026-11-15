@@ -371,8 +371,59 @@
       }
     };
 
+    // Smart Local Category Classifier (Synonyms + Stems)
+    const matchCategoryLocally = (text, tags, collections = []) => {
+      const userCats = (collections || []).filter(c => c && c.id !== 'all');
+      if (!userCats.length) return null;
+      const lower = ((text || '') + ' ' + (tags || []).join(' ')).toLowerCase();
+
+      // 1. Direct name match
+      for (const col of userCats) {
+        const name = (col.name || '').toLowerCase().trim();
+        if (name && (lower.includes(name) || (name.length > 3 && lower.includes(name.slice(0, -1))))) {
+          return col.id;
+        }
+      }
+
+      // 2. Semantic keywords for user categories
+      const synMap = {
+        'ии': ['ии', 'ai', 'нейросет', 'gpt', 'llm', 'модель', 'gemma', 'deepseek', 'chatgpt', 'openai', 'anthropic', 'claude', 'bot', 'робот', 'миджорни', 'midjourney', 'stablediffusion'],
+        'ai': ['ии', 'ai', 'нейросет', 'gpt', 'llm', 'модель', 'gemma', 'deepseek', 'chatgpt', 'openai', 'anthropic', 'claude', 'bot', 'робот', 'миджорни', 'midjourney', 'stablediffusion'],
+        'код': ['код', 'программир', 'разработк', 'javascript', 'python', 'react', 'github', 'разработчик', 'frontend', 'backend', 'css', 'html', 'api', 'bug', 'typescript'],
+        'разработк': ['код', 'программир', 'разработк', 'javascript', 'python', 'react', 'github', 'разработчик', 'frontend', 'backend', 'css', 'html', 'api', 'bug', 'typescript'],
+        'рецепт': ['рецепт', 'еда', 'блюдо', 'кухня', 'кулинар', 'паста', 'готовить', 'десерт', 'ужин', 'завтрак', 'карбонара', 'мясо', 'салат', 'выпечк', 'торт'],
+        'еда': ['рецепт', 'еда', 'блюдо', 'кухня', 'кулинар', 'паста', 'готовить', 'десерт', 'ужин', 'завтрак', 'карбонара', 'мясо', 'салат', 'выпечк', 'торт'],
+        'кулинар': ['рецепт', 'еда', 'блюдо', 'кухня', 'кулинар', 'паста', 'готовить', 'десерт', 'ужин', 'завтрак', 'карбонара', 'мясо', 'салат'],
+        'видео': ['видео', 'ролик', 'клип', 'youtube', 'tiktok', 'reels', 'shorts', 'стрим', 'фильм'],
+        'дизайн': ['дизайн', 'ui', 'ux', 'интерфейс', 'шрифт', 'figma', 'график', 'верстк', 'стиль', 'типографик', 'анимаци'],
+        'бизнес': ['бизнес', 'стартап', 'маркетинг', 'продаж', 'клиент', 'стратег', 'деньги', 'бизнесмен', 'инвестиции'],
+        'финанс': ['финанс', 'деньги', 'инвестиц', 'акции', 'крипт', 'bitcoin', 'банк', 'доход', 'бюджет', 'рынок'],
+        'путешеств': ['путешеств', 'поездк', 'отель', 'билет', 'страна', 'город', 'туризм', 'рейс', 'авиа', 'горы', 'море'],
+        'фитнес': ['фитнес', 'спорт', 'тренировк', 'мышц', 'зал', 'бег', 'упражнен', 'диета', 'похуден', 'воркаут'],
+        'спорт': ['спорт', 'тренировк', 'зал', 'футбол', 'бег', 'турнир', 'матч'],
+        'книг': ['книга', 'книги', 'чтени', 'автор', 'роман', 'литератур', 'нон-фикшн'],
+        'музык': ['музык', 'трек', 'песня', 'альбом', 'звук', 'исполнитель', 'бит', 'концерт'],
+        'кино': ['фильм', 'кино', 'сериал', 'актер', 'режиссер', 'трейлер', 'сезон', 'netflix'],
+        'игр': ['игра', 'игры', 'гейм', 'гейминг', 'steam', 'playstation', 'xbox', 'прохожден'],
+        'шоппинг': ['покупк', 'товар', 'скидк', 'магазин', 'цена', 'заказ', 'ozon', 'wildberries', 'aliexpress']
+      };
+
+      for (const col of userCats) {
+        const colName = (col.name || '').toLowerCase();
+        for (const [key, kws] of Object.entries(synMap)) {
+          if (colName.includes(key)) {
+            if (kws.some(kw => lower.includes(kw))) {
+              return col.id;
+            }
+          }
+        }
+      }
+
+      return null;
+    };
+
     // Live Link Metadata & AI Analyzer
-    const analyzeUrlWithFreeAPI = async (url, aiConf) => {
+    const analyzeUrlWithFreeAPI = async (url, aiConf, collections = []) => {
       let title = '';
       let description = '';
       let author = '';
@@ -407,11 +458,15 @@
         console.log('Direct metadata note:', e.message);
       }
 
-      // 2. If user configured an LLM key (Gemma or Gemini), run deep contextual AI summary
-      if (aiConf.apiKey && aiConf.apiKey.trim()) {
+      const userCats = (collections || []).filter(c => c && c.id !== 'all');
+      const catListText = userCats.map(c => `"${c.name}" (id: "${c.id}")`).join(', ');
+
+      // 2. If user configured an LLM key (Gemma or Gemini), run deep contextual AI summary + category matching
+      if (aiConf && aiConf.apiKey && aiConf.apiKey.trim()) {
         try {
-          const systemPrompt = "Ты персональный AI-ассистент менеджера закладок. Твоя задача — извлечь максимум пользы из предоставленной ссылки/материала. Отвечай строго валидным JSON без markdown разметки.";
-          const userPrompt = `Ссылка: "${url}". Информация со страницы: Заголовок: "${title}", Описание: "${description}". Сформируй JSON объект: {"title": "краткий емкий заголовок на русском", "summary": "емкая выжимка сути и пользы из 1-2 предложений на русском", "tags": ["тег1", "тег2", "тег3"], "platform": "${platform}"}`;
+          const systemPrompt = "Ты персональный AI-ассистент менеджера закладок. Твоя задача — извлечь максимум пользы из предоставленной ссылки/материала, составить краткое саммари и автоматически подобрать наиболее подходящую категорию. Отвечай строго валидным JSON без markdown разметки.";
+          const catPrompt = catListText ? ` Доступные категории пользователя: [${catListText}]. В поле "suggestedCategoryId" верни id наиболее подходящей категории из списка или null.` : '';
+          const userPrompt = `Ссылка: "${url}". Информация со страницы: Заголовок: "${title}", Описание: "${description}", Платформа: "${platform}".${catPrompt} Сформируй JSON объект: {"title": "краткий емкий заголовок на русском", "summary": "емкая выжимка сути и пользы из 1-2 предложений на русском", "tags": ["тег1", "тег2", "тег3"], "platform": "${platform}", "suggestedCategoryId": "id_категории_или_null"}`;
 
           if (aiConf.provider === 'gemini') {
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiConf.model || 'gemini-1.5-flash'}:generateContent?key=${aiConf.apiKey.trim()}`;
@@ -427,12 +482,17 @@
               const data = await res.json();
               const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
               const parsed = JSON.parse(text);
+              const matchedCatId = (parsed.suggestedCategoryId && parsed.suggestedCategoryId !== 'null')
+                ? parsed.suggestedCategoryId
+                : matchCategoryLocally(`${parsed.title} ${parsed.summary} ${title} ${description}`, parsed.tags, userCats);
+
               return {
                 title: parsed.title || title || `Публикация из ${platform}`,
                 summary: parsed.summary || description || 'Материал успешно сохранён в архив.',
                 tags: parsed.tags && parsed.tags.length ? parsed.tags : [platform, 'Закладки'],
                 platform: parsed.platform || platform,
-                image: image
+                image: image,
+                suggestedCategoryId: matchedCatId
               };
             }
           } else {
@@ -461,12 +521,17 @@
             if (res.ok) {
               const data = await res.json();
               const parsed = JSON.parse(data.choices?.[0]?.message?.content);
+              const matchedCatId = (parsed.suggestedCategoryId && parsed.suggestedCategoryId !== 'null')
+                ? parsed.suggestedCategoryId
+                : matchCategoryLocally(`${parsed.title} ${parsed.summary} ${title} ${description}`, parsed.tags, userCats);
+
               return {
                 title: parsed.title || title || `Публикация из ${platform}`,
                 summary: parsed.summary || description || 'Материал успешно сохранён в архив.',
                 tags: parsed.tags && parsed.tags.length ? parsed.tags : [platform, 'Закладки'],
                 platform: parsed.platform || platform,
-                image: image
+                image: image,
+                suggestedCategoryId: matchedCatId
               };
             }
           }
@@ -475,7 +540,13 @@
         }
       }
 
-      // 3. Built-in Free AI Synthesizer (Zero-key fallback, uses live page data)
+      // 3. Free Built-in Smart Semantic Category Matcher (Zero-key fallback)
+      const matchedCatId = matchCategoryLocally(
+        `${title} ${description} ${url} ${platform}`,
+        [platform],
+        userCats
+      );
+
       if (description) {
         const cleanDesc = description.trim();
         const summary = cleanDesc.length > 200 ? cleanDesc.slice(0, 197) + '...' : cleanDesc;
@@ -484,7 +555,8 @@
           summary: summary,
           tags: [platform, 'Интересное', 'Сохранённое'],
           platform: platform,
-          image: image
+          image: image,
+          suggestedCategoryId: matchedCatId
         };
       }
 
@@ -493,7 +565,8 @@
         summary: `Материал сохранён из ${platform}. Нажмите «Открыть», чтобы перейти к полному контенту.`,
         tags: [platform, 'Закладки'],
         platform: platform,
-        image: image
+        image: image,
+        suggestedCategoryId: matchedCatId
       };
     };
 
@@ -624,22 +697,28 @@
         setIsAiSettingsOpen(false);
       };
 
-      // Handle Adding URL with Live Free AI Analyzer
-      const handleAddUrl = async () => {
-        if (!urlInput.trim()) return;
+      // Handle Adding URL with Live Free AI Analyzer + Smart Categorization
+      const handleAddUrl = async (forcedUrl) => {
+        const targetUrl = (forcedUrl || urlInput || document.getElementById('url-input')?.value || '').trim();
+        if (!targetUrl) return;
+        setUrlInput(targetUrl);
         setIsProcessing(true);
-        setAiStatusMsg(aiConfig.apiKey ? `Анализирую контент через ${aiConfig.model}...` : 'Извлекаю данные и AI-выжимку по ссылке...');
+        setAiStatusMsg(aiConfig.apiKey ? `Анализирую контент через ${aiConfig.model}...` : 'Извлекаю данные и AI-выжимку...');
 
         try {
-          const analyzed = await analyzeUrlWithFreeAPI(urlInput, aiConfig);
+          const analyzed = await analyzeUrlWithFreeAPI(targetUrl, aiConfig, collections);
 
           let detectedType = (analyzed.platform === 'YouTube' || analyzed.platform === 'TikTok') ? 'video'
                            : (analyzed.platform === 'Threads' || analyzed.platform === 'X') ? 'thread'
                            : 'article';
 
+          // Automatically match category or fallback to active category or null
+          const assignedCatId = analyzed.suggestedCategoryId || (activeCollection !== 'all' ? activeCollection : null);
+          const foundCat = collections.find(c => c.id === assignedCatId);
+
           setAiPreview({
             id: String(Date.now()),
-            url: urlInput,
+            url: targetUrl,
             title: analyzed.title,
             description: analyzed.summary,
             author: `@${analyzed.platform.toLowerCase()}_source`,
@@ -650,13 +729,14 @@
             isPinned: false,
             savedAt: 'Только что',
             tags: analyzed.tags,
-            collectionId: activeCollection !== 'all' ? activeCollection : null
+            collectionId: assignedCatId,
+            suggestedCategoryName: (foundCat && foundCat.id !== 'all') ? foundCat.name : null
           });
         } catch (err) {
           console.error(err);
+        } finally {
+          setIsProcessing(false);
         }
-
-        setIsProcessing(false);
       };
 
       const confirmSave = () => {
@@ -664,6 +744,37 @@
         setItems([aiPreview, ...items]);
         setAiPreview(null);
         setUrlInput('');
+        const inputEl = document.getElementById('url-input');
+        if (inputEl) inputEl.value = '';
+      };
+
+      // Native Android Share Intent Listener
+      useEffect(() => {
+        window.onReceiveSharedUrl = (rawText) => {
+          if (!rawText) return;
+          const match = rawText.match(/https?:\/\/[^\s]+/i);
+          const targetUrl = match ? match[0] : rawText.trim();
+          setUrlInput(targetUrl);
+          const inputEl = document.getElementById('url-input');
+          if (inputEl) inputEl.value = targetUrl;
+          handleAddUrl(targetUrl);
+        };
+
+        if (window._pendingSharedUrl) {
+          window.onReceiveSharedUrl(window._pendingSharedUrl);
+          window._pendingSharedUrl = null;
+        }
+      }, [collections, aiConfig, activeCollection]);
+
+      // Tag Click Handler
+      const handleTagClick = (tag) => {
+        const cleanTag = tag.replace(/^#/, '').trim();
+        const currentClean = searchQuery.toLowerCase().replace(/^#/, '').trim();
+        if (currentClean === cleanTag.toLowerCase()) {
+          setSearchQuery('');
+        } else {
+          setSearchQuery(cleanTag);
+        }
       };
 
       const togglePin = (id) => {
@@ -679,9 +790,10 @@
           if (activeCollection !== 'all' && it.collectionId !== activeCollection) return false;
           if (activeType !== 'all' && it.contentType !== activeType) return false;
           if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase();
-            const fullText = `${it.title} ${it.description} ${it.aiSummary} ${it.tags.join(' ')} ${it.author}`.toLowerCase();
-            return fullText.includes(q);
+            const rawQ = searchQuery.toLowerCase().trim();
+            const cleanQ = rawQ.replace(/^#/, '');
+            const fullText = `${it.title} ${it.description} ${it.aiSummary} ${(it.tags || []).join(' ')} ${it.author}`.toLowerCase();
+            return fullText.includes(cleanQ) || fullText.includes(rawQ);
           }
           return true;
         }).sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
@@ -823,6 +935,7 @@
                   <Icons.Bookmark className="w-3.5 h-3.5 fill-current" />
                 </div>
                 <input
+                  id="url-input"
                   type="url"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
@@ -832,8 +945,8 @@
                   disabled={isProcessing}
                 />
                 <button
-                  onClick={handleAddUrl}
-                  disabled={isProcessing || !urlInput.trim()}
+                  onClick={() => handleAddUrl()}
+                  disabled={isProcessing || (!urlInput.trim() && !document.getElementById('url-input')?.value)}
                   className="h-7 px-3 rounded-[9px] bg-[#0A84FF] hover:bg-[#0071E3] disabled:opacity-40 text-white text-[12px] font-semibold transition-all flex items-center gap-1 flex-shrink-0 active:scale-95 shadow-sm"
                 >
                   {isProcessing ? (
@@ -885,6 +998,34 @@
                         {aiPreview.aiSummary}
                       </p>
                     </div>
+                  </div>
+
+                  {/* Category Selector with AI Auto-Detect */}
+                  <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex items-center justify-between gap-2 flex-wrap text-[11px]">
+                    <div className="flex items-center gap-1.5 text-[#8E8E93]">
+                      <Icons.Folder className="w-3.5 h-3.5 text-[#0A84FF]" />
+                      <span>Папка:</span>
+                      {aiPreview.suggestedCategoryName && (
+                        <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20 font-medium">
+                          ✦ ИИ выбрал: {aiPreview.suggestedCategoryName}
+                        </span>
+                      )}
+                    </div>
+                    <select
+                      value={aiPreview.collectionId || ''}
+                      onChange={(e) => {
+                        const val = e.target.value || null;
+                        setAiPreview({ ...aiPreview, collectionId: val, suggestedCategoryName: null });
+                      }}
+                      className="bg-[#2C2C2E] text-white text-[11px] font-medium px-2 py-1 rounded-[8px] border border-white/10 outline-none focus:border-[#0A84FF]"
+                    >
+                      <option value="">Не сортировано</option>
+                      {collections.filter(c => c && c.id !== 'all').map(col => (
+                        <option key={col.id} value={col.id}>
+                          {col.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="flex justify-end gap-2 mt-3 pt-2.5 border-t border-white/[0.08]">
@@ -1016,16 +1157,30 @@
                         </div>
                       )}
 
-                      {/* Tags */}
+                      {/* Interactive Tags (Clicking filters by tag) */}
                       <div className="flex flex-wrap gap-1 mt-auto pt-1">
-                        {item.tags.map((tag, i) => (
-                          <span
-                            key={i}
-                            className="px-1.5 py-0.5 rounded-[6px] text-[10px] font-medium bg-white/[0.05] text-[#8E8E93]"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
+                        {item.tags.map((tag, i) => {
+                          const cleanTag = tag.replace(/^#/, '').trim();
+                          const isTagActive = searchQuery.toLowerCase().replace(/^#/, '').trim() === cleanTag.toLowerCase();
+                          return (
+                            <button
+                              type="button"
+                              key={i}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleTagClick(cleanTag);
+                              }}
+                              className={`px-1.5 py-0.5 rounded-[6px] text-[10px] font-medium transition-all ${
+                                isTagActive
+                                  ? 'bg-[#0A84FF] text-white shadow-sm ring-1 ring-white/20'
+                                  : 'bg-white/[0.06] text-[#8E8E93] hover:text-white hover:bg-white/10 active:scale-95'
+                              }`}
+                              title={`Фильтровать по тегу #${cleanTag}`}
+                            >
+                              #{cleanTag}
+                            </button>
+                          );
+                        })}
                       </div>
 
                       {/* Footer Actions: Explicit "Открыть" button */}
@@ -1407,7 +1562,44 @@
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    class ErrorBoundary extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+      static getDerivedStateFromError(error) {
+        return { hasError: true };
+      }
+      componentDidCatch(error, info) {
+        console.error("App error:", error, info);
+      }
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center mb-3">
+                <svg className="w-6 h-6 stroke-current" viewBox="0 0 24 24" fill="none" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <h2 className="text-[16px] font-bold mb-1">Произошла ошибка</h2>
+              <p className="text-[12px] text-[#8E8E93] max-w-xs mb-4">Нажмите кнопку ниже, чтобы перезапустить интерфейс.</p>
+              <button
+                onClick={() => { localStorage.clear(); window.location.reload(); }}
+                className="px-4 py-2 rounded-[10px] bg-[#0A84FF] text-white font-semibold text-[12px]"
+              >
+                Перезагрузить приложение
+              </button>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    );
   </script>
 </body>
 </html>

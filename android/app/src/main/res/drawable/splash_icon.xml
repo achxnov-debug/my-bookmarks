@@ -4,7 +4,12 @@
     android:height="120dp"
     android:viewportWidth="120"
     android:viewportHeight="120">
+  <!-- Rounded Squircle Badge with Vibrant Blue #0A84FF matching Header App Icon -->
   <path
       android:fillColor="#0A84FF"
-      android:pathData="M44,28 C41.79,28 40,29.79 40,32 L40,92 L60,80 L80,92 L80,32 C80,29.79 78.21,28 76,28 L44,28 Z"/>
+      android:pathData="M24,12 L96,12 C102.63,12 108,17.37 108,24 L108,96 C108,102.63 102.63,108 96,108 L24,108 C17.37,108 12,102.63 12,96 L12,24 C12,17.37 17.37,12 24,12 Z"/>
+  <!-- Crisp White Bookmark Ribbon inside the badge -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M44,32 C41.79,32 40,33.79 40,36 L40,88 L60,76 L80,88 L80,36 C80,33.79 78.21,32 76,32 L44,32 Z"/>
 </vector>

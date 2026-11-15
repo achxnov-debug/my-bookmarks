@@ -98,15 +98,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleSendIntent(intent: Intent) {
-        if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
-            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-            sharedText?.let { url ->
-                // Inject URL into web app input
-                val script = "javascript:(function(){" +
-                        "const input = document.querySelector('input[type=\"url\"]');" +
-                        "if(input){ input.value = '$url'; input.dispatchEvent(new Event('input', {bubbles:true})); }" +
-                        "})()"
-                webView.postDelayed({ webView.evaluateJavascript(script, null) }, 1000)
+        if (intent.action == Intent.ACTION_SEND) {
+            val raw = intent.getStringExtra(Intent.EXTRA_TEXT)
+                ?: intent.clipData?.getItemAt(0)?.text?.toString()
+                ?: intent.dataString
+            
+            raw?.let { text ->
+                // Extract actual http/https URL from shared message
+                val regex = "(https?://[\\w\\d:#@%/;$()~_?\\+-=\\\\.&]+)".toRegex()
+                val match = regex.find(text)
+                val targetUrl = match?.value ?: text.trim()
+
+                val escaped = org.json.JSONObject.quote(targetUrl)
+                val script = """
+                    (function() {
+                        if (window.onReceiveSharedUrl) {
+                            window.onReceiveSharedUrl($escaped);
+                        } else {
+                            window._pendingSharedUrl = $escaped;
+                        }
+                    })();
+                """.trimIndent()
+
+                webView.evaluateJavascript(script, null)
+                webView.postDelayed({ webView.evaluateJavascript(script, null) }, 500)
+                webView.postDelayed({ webView.evaluateJavascript(script, null) }, 1500)
             }
         }
     }
