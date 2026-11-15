@@ -699,8 +699,14 @@
 
       // Handle Adding URL with Live Free AI Analyzer + Smart Categorization
       const handleAddUrl = async (forcedUrl) => {
-        const targetUrl = (forcedUrl || urlInput || document.getElementById('url-input')?.value || '').trim();
+        let targetUrl = (forcedUrl || urlInput || document.getElementById('url-input')?.value || '').trim();
         if (!targetUrl) return;
+
+        // Auto-prepend https:// if protocol is missing
+        if (!/^https?:\/\//i.test(targetUrl)) {
+          targetUrl = 'https://' + targetUrl;
+        }
+
         setUrlInput(targetUrl);
         setIsProcessing(true);
         setAiStatusMsg(aiConfig.apiKey ? `Анализирую контент через ${aiConfig.model}...` : 'Извлекаю данные и AI-выжимку...');
@@ -1074,9 +1080,44 @@
               )}
             </div>
 
-            {/* Clean Responsive Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              {filteredItems.map(item => {
+            {/* Clean Responsive Cards Grid or Empty State */}
+            {filteredItems.length === 0 ? (
+              <div className="w-full py-16 px-4 flex flex-col items-center justify-center text-center ios-card bg-[#1C1C1E]/50 border border-white/[0.06] rounded-[24px] my-4 animate-fade-in">
+                <div className="w-14 h-14 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-[#8E8E93] mb-3">
+                  {searchQuery ? (
+                    <Icons.Search className="w-6 h-6 text-[#0A84FF]" />
+                  ) : (
+                    <Icons.Bookmark className="w-6 h-6 text-[#8E8E93]" />
+                  )}
+                </div>
+                <h3 className="text-[15px] font-semibold text-white mb-1">
+                  {searchQuery
+                    ? 'Ничего не найдено'
+                    : activeCollection !== 'all'
+                    ? `В категории «${getCategoryInfo(activeCollection).name}» пока пусто`
+                    : 'У вас пока нет закладок'}
+                </h3>
+                <p className="text-[12px] text-[#8E8E93] max-w-xs mb-4">
+                  {searchQuery
+                    ? 'Попробуйте изменить поисковый запрос или сбросить активные фильтры'
+                    : 'Вставьте ссылку в поле выше или отправьте её через кнопку «Поделиться»'}
+                </p>
+                {(searchQuery || activeCollection !== 'all' || activeType !== 'all') && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setActiveCollection('all');
+                      setActiveType('all');
+                    }}
+                    className="px-3.5 py-1.5 rounded-[10px] bg-[#0A84FF]/15 text-[#0A84FF] hover:bg-[#0A84FF] hover:text-white transition-all text-[11px] font-semibold"
+                  >
+                    Сбросить фильтры
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                {filteredItems.map(item => {
                 const categoryInfo = getCategoryInfo(item.collectionId);
                 const FolderIcon = categoryInfo.Icon;
                 const isSummaryOpen = activeSummaryId === item.id;
@@ -1222,7 +1263,8 @@
                   </div>
                 );
               })}
-            </div>
+              </div>
+            )}
           </main>
 
           {/* Modal 1: Category Management (Create & Delete) */}
